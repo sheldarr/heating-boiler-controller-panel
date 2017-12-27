@@ -6,7 +6,8 @@
   "author": "sheldar <kewin.polok@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "start": "node index.js"
   },
   "devDependencies": {
     "webpack": "^3.10.0"
@@ -14,7 +15,9 @@
   "dependencies": {
     "axios": "^0.17.1",
     "dotenv": "^4.0.0",
+    "express": "^4.16.2",
     "lowdb": "^1.0.0",
+    "morgan": "^1.9.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "uuid": "^3.1.0",

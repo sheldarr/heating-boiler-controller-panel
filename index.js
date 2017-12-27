@@ -36,7 +36,8 @@ setInterval(() => {
             winston.info(`Response: ${JSON.stringify(response.data)}`);
             db.get('measurements')
                 .push(Object.assign({}, response.data, {
-                    id: uuidv4()
+                    id: uuidv4(),
+                    timestamp: Date.now()
                 }))
                 .write();
         })
@@ -44,3 +45,31 @@ setInterval(() => {
             winston.error(error);
         });
 }, process.env.INTERVAL);
+
+const express = require('express')
+const morgan = require('morgan');
+const application = express()
+
+application.use(morgan('combined', {
+    stream: {
+        write: (message) => {
+            winston.info(message);
+        }
+    }
+}));
+
+application.get(
+    '/',
+    (request, response) => {
+        const measurements = db.get('measurements');
+
+        response.send(measurements);
+    }
+);
+
+application.listen(
+    process.env.PORT,
+    () => {
+        winston.info(`Application running on port ${process.env.PORT}`);
+    }
+);
