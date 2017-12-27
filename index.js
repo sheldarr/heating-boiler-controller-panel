@@ -60,6 +60,8 @@ application.use(morgan('combined', {
 
 application.set('view engine', 'pug');
 
+application.use('/public', express.static('build'))
+
 application.get(
     '/',
     (request, response) => {
@@ -77,7 +79,6 @@ application.get(
         response.send(measurements);
     }
 );
-
 
 application.listen(
     process.env.PORT,

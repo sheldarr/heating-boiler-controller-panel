@@ -1,8 +1,10 @@
+import React from 'react';
+
 class Panel extends React.Component {
     render() {
         return (
             <div>
-                Hello {this.props.name}
+                heating-boiler-controller-plugin
             </div>
         );
     }
