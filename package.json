@@ -1,7 +1,7 @@
 {
   "name": "heating-boiler-controller-panel",
   "version": "1.0.0",
-  "main": "build/bundle.js",
+  "main": "index.js",
   "repository": "https://github.com/sheldarr/heating-boiler-controller-panel.git",
   "author": "sheldar <kewin.polok@gmail.com>",
   "license": "MIT",
@@ -10,5 +10,14 @@
   },
   "devDependencies": {
     "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "dotenv": "^4.0.0",
+    "lowdb": "^1.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "uuid": "^3.1.0",
+    "winston": "^2.4.0"
   }
 }
