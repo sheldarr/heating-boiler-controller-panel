@@ -58,14 +58,26 @@ application.use(morgan('combined', {
     }
 }));
 
+application.set('view engine', 'pug');
+
 application.get(
     '/',
+    (request, response) => {
+        response.render('index', {
+            title: 'heating-boiler-controller-panel'
+        });
+    }
+);
+
+application.get(
+    '/api/measurements',
     (request, response) => {
         const measurements = db.get('measurements');
 
         response.send(measurements);
     }
 );
+
 
 application.listen(
     process.env.PORT,
