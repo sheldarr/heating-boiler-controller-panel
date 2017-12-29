@@ -3,14 +3,14 @@ import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 import moment from 'moment';
 
-class Chart extends React.Component{
+class Chart extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             chartData: {
-              labels: [],
-              datasets: []
+                labels: [],
+                datasets: []
             },
             chartOptions: {},
             intervalId: null
@@ -18,7 +18,7 @@ class Chart extends React.Component{
     }
 
     componentWillMount() {
-        const intervalId = setTimeout(() => {}, 1000);
+        const intervalId = setTimeout(() => { }, 1000);
         this.updateData();
 
         this.setState({
@@ -26,7 +26,7 @@ class Chart extends React.Component{
         });
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         clearInterval(this.state.intervalId);
     }
 
