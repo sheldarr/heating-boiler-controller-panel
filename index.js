@@ -76,7 +76,7 @@ application.get(
 );
 
 application.get(
-    '/api/measurements',
+    '/api/temperature/:sensorId',
     (request, response) => {
         const measurements = db.get('measurements');
 

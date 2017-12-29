@@ -1,11 +1,16 @@
 {
+    "server": {
+        "api": {
+            "temperature": "http://localhost:6060/api/temperature"
+        }
+    },
     "sensors": [{
+        "id": "output",
         "label": "Output Temparature",
-        "color": "#c5effd",
-        "url": "http://localhost:6060/api/measurements"
+        "color": "#c5effd"
     }, {
+        "id": "input",
         "label": "Input Temparature",
-        "color": "#fdaaaa",
-        "url": "http://localhost:6060/api/measurements"
+        "color": "#fdaaaa"
     }]
 }

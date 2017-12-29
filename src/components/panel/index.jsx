@@ -31,7 +31,7 @@ class Panel extends React.Component {
     getMeasurements() {
         config.sensors.forEach((sensor) => {
             axios
-                .get(`http://localhost:6060/api/measurements`)
+                .get(`${config.server.api.temperature}/${sensor.id}`)
                 .then((response) => {
                     const data = response.data.slice(-this.state.lastMeasurements);
 
@@ -43,15 +43,18 @@ class Panel extends React.Component {
                             labels: data.map((entry) => {
                                 return moment(entry.timestamp).format('HH:mm:ss');
                             }),
-                            datasets: [{
-                                label: sensor.label,
-                                data: data.map((entry) => {
-                                    return entry.temperature
-                                }),
-                                backgroundColor: sensor. color,
-                                borderColor: sensor.color,
-                                fill: false
-                            }]
+                            datasets: [
+                                ...this.state.measurementsChartData.datasets,
+                                {
+                                    label: sensor.label,
+                                    data: data.map((entry) => {
+                                        return entry.temperature
+                                    }),
+                                    backgroundColor: sensor. color,
+                                    borderColor: sensor.color,
+                                    fill: false
+                                }
+                            ]
                         }
                     })
                 })
