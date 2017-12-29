@@ -25,10 +25,14 @@ db
     })
     .write();
 
-setInterval(() => {
-    const requestUrl = `http://${process.env.SENSOR_IP}`;
+const CronJob = require('cron').CronJob;
+const moment = require('moment');
 
-    winston.info(`Gathering data from ${requestUrl}...`);
+new CronJob('0 * * * * *', () => {
+    const requestUrl = `http://${process.env.SENSOR_IP}`;
+    const timestamp = Date.now();
+
+    winston.info(`${moment(timestamp).format('HH:mm:ss')} GET ${requestUrl}...`);
 
     axios
         .get(requestUrl)
@@ -37,14 +41,14 @@ setInterval(() => {
             db.get('measurements')
                 .push(Object.assign({}, response.data, {
                     id: uuidv4(),
-                    timestamp: Date.now()
+                    timestamp
                 }))
                 .write();
         })
         .catch((error) => {
             winston.error(error);
         });
-}, process.env.INTERVAL);
+}, null, true);
 
 const express = require('express')
 const morgan = require('morgan');
