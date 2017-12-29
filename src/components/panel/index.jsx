@@ -16,10 +16,12 @@ class Panel extends React.Component {
             measurementsChartData: {
                 labels: [],
                 datasets: []
-            }
+            },
+            lastMeasurements: 1200
         }
 
         this.getMeasurements = this.getMeasurements.bind(this);
+        this.handleLastMeasurementsChange = this.handleLastMeasurementsChange.bind(this);
     }
 
     componentWillMount() {
@@ -28,11 +30,10 @@ class Panel extends React.Component {
 
     getMeasurements() {
         config.sensors.forEach((sensor) => {
-            console.log(sensor);
             axios
                 .get(`http://localhost:6060/api/measurements`)
                 .then((response) => {
-                    const data = response.data.slice(-1024);
+                    const data = response.data.slice(-this.state.lastMeasurements);
 
                     this.setState({
                         fan: !this.state.fan,
@@ -60,6 +61,12 @@ class Panel extends React.Component {
         });
     }
 
+    handleLastMeasurementsChange(event) {
+        this.setState({
+            lastMeasurements: event.target.value
+        });
+    }
+
     render() {
         return (
             <div className="container">
@@ -77,6 +84,14 @@ class Panel extends React.Component {
                     </div>
                     <div className="column">
                         <span> Hysteresis: {this.state.hysteresis} </span>
+                    </div>
+                    <div className="column">
+                        <input 
+                            id="last-measurements"
+                            type="number"
+                            value={this.state.lastMeasurements}
+                            onChange={this.handleLastMeasurementsChange} 
+                            />
                     </div>
                     <div className="column">
                         <button type="button" onClick={this.getMeasurements}>
