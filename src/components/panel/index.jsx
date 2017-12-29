@@ -1,11 +1,13 @@
-import React from 'react';
-import Chart from '../chart/index.jsx';
 import axios from 'axios';
 import moment from 'moment';
+import React from 'react';
+
+import Chart from '../chart/index.jsx';
 
 class Panel extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             fan: false,
             setpoint: null,
@@ -15,6 +17,8 @@ class Panel extends React.Component {
                 datasets: []
             }
         }
+
+        this.getMeasurements = this.getMeasurements.bind(this);
     }
 
     componentWillMount() {
@@ -57,13 +61,13 @@ class Panel extends React.Component {
                 </div>
                 <div className="row">
                     <div className="column">
-                        <span> Fan: { this.fan ? 'ON' : 'OFF' } </span>
+                        <span> Fan: {this.fan ? 'ON' : 'OFF'} </span>
                     </div>
                     <div className="column">
-                        <span> Setpoint: { this.state.setpoint } </span>
+                        <span> Setpoint: {this.state.setpoint} </span>
                     </div>
                     <div className="column">
-                        <span> Hysteresis: { this.state.hysteresis } </span>
+                        <span> Hysteresis: {this.state.hysteresis} </span>
                     </div>
                     <div className="column">
                         <button type="button" onClick={this.getMeasurements}>
