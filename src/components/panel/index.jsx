@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 
 import Chart from '../chart/index.jsx';
+import config from '../../config/index.json';
 
 class Panel extends React.Component {
     constructor(props) {
@@ -26,29 +27,37 @@ class Panel extends React.Component {
     }
 
     getMeasurements() {
-        axios
-            .get(`http://localhost:6060/api/measurements`)
-            .then((response) => {
-                this.setState({
-                    fan: !this.state.fan,
-                    setpoint: response.data[response.data.length - 1].setpoint,
-                    hysteresis: response.data[response.data.length - 1].hysteresis,
-                    measurementsChartData: {
-                        labels: response.data.map((entry) => {
-                            return moment(entry.timestamp).format('HH:mm:ss');
-                        }),
-                        datasets: [{
-                            label: "Temperature Out",
-                            data: response.data.map((entry) => {
-                                return entry.temperature
-                            })
-                        }]
-                    }
+        config.sensors.forEach((sensor) => {
+            console.log(sensor);
+            axios
+                .get(`http://localhost:6060/api/measurements`)
+                .then((response) => {
+                    const data = response.data.slice(-1024);
+
+                    this.setState({
+                        fan: !this.state.fan,
+                        setpoint: data[data.length - 1].setpoint,
+                        hysteresis: data[data.length - 1].hysteresis,
+                        measurementsChartData: {
+                            labels: data.map((entry) => {
+                                return moment(entry.timestamp).format('HH:mm:ss');
+                            }),
+                            datasets: [{
+                                label: sensor.label,
+                                data: data.map((entry) => {
+                                    return entry.temperature
+                                }),
+                                backgroundColor: sensor. color,
+                                borderColor: sensor.color,
+                                fill: false
+                            }]
+                        }
+                    })
                 })
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+                .catch((error) => {
+                    console.error(error);
+                });
+        });
     }
 
     render() {

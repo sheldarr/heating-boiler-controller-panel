@@ -1,0 +1,11 @@
+{
+    "sensors": [{
+        "label": "Output Temparature",
+        "color": "#c5effd",
+        "url": "http://localhost:6060/api/measurements"
+    }, {
+        "label": "Input Temparature",
+        "color": "#fdaaaa",
+        "url": "http://localhost:6060/api/measurements"
+    }]
+}
