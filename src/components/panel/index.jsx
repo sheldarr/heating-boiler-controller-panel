@@ -26,6 +26,9 @@ class Panel extends React.Component {
             .get(`http://localhost:6060/api/measurements`)
             .then((response) => {
                 this.setState({
+                    fan: !this.state.fan,
+                    setpoint: response.data[response.data.length - 1].setpoint,
+                    hysteresis: response.data[response.data.length - 1].hysteresis,
                     measurementsChartData: {
                         labels: response.data.map((entry) => {
                             return moment(entry.timestamp).format('HH:mm:ss');
