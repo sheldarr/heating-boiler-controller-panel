@@ -63,7 +63,7 @@ class Panel extends React.Component {
                         <span> Hysteresis: { this.state.hysteresis } </span>
                     </div>
                     <div className="column">
-                        <button type="button">
+                        <button type="button" onClick={this.getMeasurements}>
                             Refresh
                         </button>
                     </div>
