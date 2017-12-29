@@ -28,7 +28,7 @@ db
 const CronJob = require('cron').CronJob;
 const moment = require('moment');
 
-new CronJob('0 * * * * *', () => {
+new CronJob(process.env.CRON, () => {
     const requestUrl = `http://${process.env.SENSOR_IP}`;
     const timestamp = Date.now();
 
