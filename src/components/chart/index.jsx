@@ -1,5 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import axios from 'axios';
+import moment from 'moment';
 
 class Chart extends React.Component{
     constructor(props) {
@@ -16,7 +18,8 @@ class Chart extends React.Component{
     }
 
     componentWillMount() {
-        const intervalId = setInterval(this.updateData.bind(this), 1000);
+        const intervalId = setTimeout(() => {}, 1000);
+        this.updateData();
 
         this.setState({
             intervalId
@@ -28,15 +31,26 @@ class Chart extends React.Component{
     }
 
     updateData() {
-        this.setState({
-            chartData: {
-                labels: ['example-label-1', 'example-label-2'],
-                datasets: [{
-                    label: 'example-dataset',
-                    data: [1, 2]
-                }]
-            }
-        })
+        axios
+            .get(`http://localhost:6060/api/measurements`)
+            .then((response) => {
+                this.setState({
+                    chartData: {
+                        labels: response.data.map((entry) => {
+                            return moment(entry.timestamp).format('HH:mm:ss');
+                        }),
+                        datasets: [{
+                            label: "Temperature Out",
+                            data: response.data.map((entry) => {
+                                return entry.temperature
+                            })
+                        }]
+                    }
+                })
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     render() {
