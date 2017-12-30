@@ -21,32 +21,52 @@ const adapter = new FileSync('var/db.json')
 const db = low(adapter)
 
 db
-    .defaults({
-        measurements: []
-    })
+    .defaults({})
     .write();
 
+const sensors = process.env.SENSORS.split(' ').map((sensor) => {
+    return {
+        id: sensor.split('|')[0],
+        host: sensor.split('|')[1],
+        path: sensor.split('|')[2]
+    }
+})
+
+winston.info(`Configured sensors ${JSON.stringify(sensors)}`);
+
+sensors.forEach((sensor) => {
+    const sensorKey = `sensor.${sensor.id}`;
+    if (db.has(sensorKey).value()) {
+        return;
+    }
+    
+    db.set(sensorKey, []).write();
+});
+
 new CronJob(process.env.CRON, () => {
-    const requestUrl = `http://${process.env.SENSOR_IP}`;
     const timestamp = Date.now();
 
-    winston.info(`${moment(timestamp).format('HH:mm:ss')} GET ${requestUrl}...`);
+    sensors.forEach((sensor) => {
+        const requestUrl = `http://${sensor.host}${sensor.path}`;
 
-    axios
-        .get(requestUrl)
-        .then((response) => {
-            winston.info(`Response: ${JSON.stringify(response.data)}`);
-            db.get('measurements')
-                .push(Object.assign({}, response.data, {
-                    id: uuidv4(),
-                    timestamp,
-                    date: moment(timestamp).format()
-                }))
-                .write();
-        })
-        .catch((error) => {
-            winston.error(error);
-        });
+        winston.info(`${moment(timestamp).format()} GET ${requestUrl}...`);
+        
+        axios
+            .get(requestUrl)
+            .then((response) => {
+                winston.info(`Response: ${JSON.stringify(response.data)}`);
+                db.get(`sensor.${sensor.id}`)
+                    .push(Object.assign({}, response.data, {
+                        id: uuidv4(),
+                        timestamp,
+                        date: moment(timestamp).format()
+                    }))
+                    .write();
+            })
+            .catch((error) => {
+                winston.error(error);
+            });
+    })
 }, null, true);
 
 const express = require('express')
@@ -75,11 +95,11 @@ application.get(
 );
 
 application.get(
-    '/api/temperature/:sensorId',
+    '/api/sensor/:sensorId',
     (request, response) => {
-        const measurements = db.get('measurements');
+        const sensor = db.get(`sensor.${request.params.sensorId}`).value();
 
-        response.send(measurements);
+        response.send(sensor);
     }
 );
 
