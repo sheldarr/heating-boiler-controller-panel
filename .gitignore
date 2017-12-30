@@ -61,4 +61,4 @@ typings/
 build/
 
 # db
-var/db.json
+var/
