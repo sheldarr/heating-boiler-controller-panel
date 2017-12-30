@@ -1,7 +1,12 @@
-require('dotenv').config();
-
 const axios = require('axios');
 const winston = require('winston');
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+const uuidv4 = require('uuid/v4');
+const CronJob = require('cron').CronJob;
+const moment = require('moment');
+
+require('dotenv').config();
 
 winston.configure({
     transports: [
@@ -11,22 +16,15 @@ winston.configure({
     ]
 });
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
 
 const adapter = new FileSync('var/db.json')
 const db = low(adapter)
-
-const uuidv4 = require('uuid/v4');
 
 db
     .defaults({
         measurements: []
     })
     .write();
-
-const CronJob = require('cron').CronJob;
-const moment = require('moment');
 
 new CronJob(process.env.CRON, () => {
     const requestUrl = `http://${process.env.SENSOR_IP}`;
@@ -41,7 +39,8 @@ new CronJob(process.env.CRON, () => {
             db.get('measurements')
                 .push(Object.assign({}, response.data, {
                     id: uuidv4(),
-                    timestamp
+                    timestamp,
+                    date: moment(timestamp).format()
                 }))
                 .write();
         })
