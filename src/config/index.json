@@ -1,7 +1,7 @@
 {
     "server": {
         "api": {
-            "temperature": "http://localhost:6060/api/sensor"
+            "sensor": "http://localhost:6060/api/sensor"
         }
     },
     "sensors": [{

@@ -29,9 +29,16 @@ class Panel extends React.Component {
     }
 
     getMeasurements() {
+        this.setState({
+            measurementsChartData: {
+                labels: this.state.measurementsChartData.labels,
+                datasets: []
+            }
+        });
+        
         config.sensors.forEach((sensor) => {
             axios
-                .get(`${config.server.api.temperature}/${sensor.id}`)
+                .get(`${config.server.api.sensor}/${sensor.id}`)
                 .then((response) => {
                     const data = response.data.slice(-this.state.lastMeasurements);
 
