@@ -11,13 +11,13 @@ class Panel extends React.Component {
 
         this.state = {
             fan: false,
-            setpoint: null,
-            hysteresis: null,
+            setpoint: 20,
+            hysteresis: 2,
             measurementsChartData: {
                 labels: [],
                 datasets: []
             },
-            lastMeasurements: 1200
+            lastMeasurements: 1440
         }
 
         this.getMeasurements = this.getMeasurements.bind(this);
@@ -35,17 +35,17 @@ class Panel extends React.Component {
                 datasets: []
             }
         });
-        
+
         config.sensors.forEach((sensor) => {
             axios
                 .get(`${config.server.api.sensor}/${sensor.id}`)
                 .then((response) => {
-                    const data = response.data.slice(-this.state.lastMeasurements);
+                    const data = response.data.slice(-this.state.lastMeasurements) || [];
 
                     this.setState({
                         fan: !this.state.fan,
-                        setpoint: data[data.length - 1].setpoint,
-                        hysteresis: data[data.length - 1].hysteresis,
+                        setpoint: data.length ? data[data.length - 1].setpoint : 20,
+                        hysteresis: data.length ? data[data.length - 1].hysteresis : 2,
                         measurementsChartData: {
                             labels: data.map((entry) => {
                                 return moment(entry.timestamp).format('HH:mm:ss');
@@ -87,21 +87,40 @@ class Panel extends React.Component {
                 </div>
                 <div className="row">
                     <div className="column">
-                        <span> Fan: {this.fan ? 'ON' : 'OFF'} </span>
+                        <div>Fan { this.state.fan ? 'ON' : 'OFF'}</div>
                     </div>
                     <div className="column">
-                        <span> Setpoint: {this.state.setpoint} </span>
+                        <label htmlFor="setpoint">Setpoint</label>
+                        <input 
+                            id="setpoint"
+                            type="number"
+                            min="1"
+                            max="100"
+                            step="0.1"
+                            value={this.state.setpoint}
+                            onChange={this.handleLastMeasurementsChange} 
+                        />
                     </div>
                     <div className="column">
-                        <span> Hysteresis: {this.state.hysteresis} </span>
+                    <label htmlFor="hysteresis">Hysteresis</label>
+                        <input 
+                            id="hysteresis"
+                            type="number"
+                            min="1"
+                            max="10"
+                            step="0.5"
+                            value={this.state.hysteresis}
+                            onChange={this.handleLastMeasurementsChange} 
+                        />
                     </div>
                     <div className="column">
+                        <label htmlFor="last-measurements">Last measurements</label>
                         <input 
                             id="last-measurements"
                             type="number"
                             value={this.state.lastMeasurements}
                             onChange={this.handleLastMeasurementsChange} 
-                            />
+                        />
                     </div>
                     <div className="column">
                         <button type="button" onClick={this.getMeasurements}>
