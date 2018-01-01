@@ -42,6 +42,19 @@ class Panel extends React.Component {
             }
         });
 
+        axios
+            .get(config.server.api.controller.settings)
+            .then((response) => {
+                this.setState({
+                    setpoint: response.data.setpoint,
+                    hysteresis: response.data.hysteresis,
+                    mode: response.data.mode,
+                    fanOn: response.data.fanOn,
+                });
+            })
+            .catch((error) => {
+                toast.error(error.toString());
+            });
         config.sensors.forEach((sensor) => {
             axios
                 .get(`${config.server.api.sensor}/${sensor.id}`)
@@ -49,10 +62,6 @@ class Panel extends React.Component {
                     const data = response.data.slice(-this.state.lastMeasurements) || [];
 
                     this.setState({
-                        fanOn: data.length ? data[data.length - 1].fanOn : false,
-                        setpoint: data.length ? data[data.length - 1].setpoint : 20,
-                        hysteresis: data.length ? data[data.length - 1].hysteresis : 2,
-                        mode: data.length ? data[data.length - 1].mode : 'NORMAL',
                         measurementsChartData: {
                             labels: data.map((entry) => {
                                 return moment(entry.timestamp).format('HH:mm:ss');
@@ -62,9 +71,9 @@ class Panel extends React.Component {
                                 {
                                     label: sensor.label,
                                     data: data.map((entry) => {
-                                        return entry.temperature
+                                        return entry.value
                                     }),
-                                    backgroundColor: sensor. color,
+                                    backgroundColor: sensor.color,
                                     borderColor: sensor.color,
                                     fill: false
                                 }
@@ -73,7 +82,7 @@ class Panel extends React.Component {
                     })
                 })
                 .catch((error) => {
-                    toast.error(error);
+                    toast.error(error.toString());
                 });
         });
     }
@@ -112,7 +121,7 @@ class Panel extends React.Component {
                 toast.success('Settings saved!');
             })
             .catch((error) => {
-                toast.error(error);
+                toast.error(error.toString());
             });
     }
 

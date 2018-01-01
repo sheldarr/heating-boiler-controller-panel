@@ -24,7 +24,11 @@ const adapter = new FileSync('var/db.json')
 const db = low(adapter)
 
 db
-    .defaults({})
+    .defaults({
+        'controller.settings': {},
+        'sensor.input': [],
+        'sensor.output': []
+    })
     .write();
 
 const controller = {
@@ -32,50 +36,45 @@ const controller = {
     path: process.env.CONTROLLER.split('|')[1]
 };
 
-const sensors = process.env.SENSORS.split(' ').map((sensor) => {
-    return {
-        id: sensor.split('|')[0],
-        host: sensor.split('|')[1],
-        path: sensor.split('|')[2]
-    }
-});
-
 winston.info(`Configured controller ${JSON.stringify(controller)}`);
-winston.info(`Configured sensors ${JSON.stringify(sensors)}`);
-
-sensors.forEach((sensor) => {
-    const sensorKey = `sensor.${sensor.id}`;
-    if (db.has(sensorKey).value()) {
-        return;
-    }
-    
-    db.set(sensorKey, []).write();
-});
 
 new CronJob(process.env.CRON, () => {
     const timestamp = Date.now();
+    const requestUrl = `http://${controller.host}${controller.path}`;
 
-    sensors.forEach((sensor) => {
-        const requestUrl = `http://${sensor.host}${sensor.path}`;
+    winston.info(`${moment(timestamp).format()} GET ${requestUrl}...`);
+    
+    axios
+        .get(requestUrl)
+        .then((response) => {
+            winston.info(`Response: ${JSON.stringify(response.data)}`);
 
-        winston.info(`${moment(timestamp).format()} GET ${requestUrl}...`);
-        
-        axios
-            .get(requestUrl)
-            .then((response) => {
-                winston.info(`Response: ${JSON.stringify(response.data)}`);
-                db.get(`sensor.${sensor.id}`)
-                    .push(Object.assign({}, response.data, {
-                        id: uuidv4(),
-                        timestamp,
-                        date: moment(timestamp).format()
-                    }))
-                    .write();
-            })
-            .catch((error) => {
-                winston.error(error);
-            });
-    })
+            db.get('sensor.output')
+                .push({
+                    id: uuidv4(),
+                    timestamp,
+                    date: moment(timestamp).format(),
+                    value: response.data.outputTemperature
+                })
+                .write();
+            db.get('sensor.input')
+                .push({
+                    id: uuidv4(),
+                    timestamp,
+                    date: moment(timestamp).format(),
+                    value: response.data.inputTemperature
+                })
+                .write();
+            db.set('controller.settings', {
+                setpoint: response.data.setpoint,
+                hysteresis: response.data.hysteresis,
+                mode: response.data.mode,
+                fanOn: response.data.fanOn,
+            }).write();
+        })
+        .catch((error) => {
+            winston.error(error);
+        });
 }, null, true);
 
 const application = express()
@@ -109,6 +108,15 @@ application.get(
         const sensor = db.get(`sensor.${request.params.sensorId}`).value();
 
         response.send(sensor);
+    }
+);
+
+application.get(
+    '/api/controller/settings',
+    (request, response) => {
+        const settings = db.get('controller.settings').value();
+
+        response.send(settings);
     }
 );
 
