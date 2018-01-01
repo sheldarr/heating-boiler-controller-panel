@@ -10,9 +10,10 @@ class Panel extends React.Component {
         super(props);
 
         this.state = {
-            fan: false,
+            fanOn: false,
             setpoint: 20,
             hysteresis: 2,
+            mode: 'NORMAL',
             measurementsChartData: {
                 labels: [],
                 datasets: []
@@ -21,6 +22,9 @@ class Panel extends React.Component {
         }
 
         this.getMeasurements = this.getMeasurements.bind(this);
+        this.handleSetpointChange = this.handleSetpointChange.bind(this);
+        this.handleHysteresisChange = this.handleHysteresisChange.bind(this);
+        this.handleModeChange = this.handleModeChange.bind(this);
         this.handleLastMeasurementsChange = this.handleLastMeasurementsChange.bind(this);
     }
 
@@ -43,9 +47,10 @@ class Panel extends React.Component {
                     const data = response.data.slice(-this.state.lastMeasurements) || [];
 
                     this.setState({
-                        fan: !this.state.fan,
+                        fanOn: data.length ? data[data.length - 1].fanOn : false,
                         setpoint: data.length ? data[data.length - 1].setpoint : 20,
                         hysteresis: data.length ? data[data.length - 1].hysteresis : 2,
+                        mode: data.length ? data[data.length - 1].mode : 'NORMAL',
                         measurementsChartData: {
                             labels: data.map((entry) => {
                                 return moment(entry.timestamp).format('HH:mm:ss');
@@ -71,6 +76,24 @@ class Panel extends React.Component {
         });
     }
 
+    handleSetpointChange(event) {
+        this.setState({
+            setpoint: event.target.value
+        });
+    }
+
+    handleHysteresisChange(event) {
+        this.setState({
+            hysteresis: event.target.value
+        });
+    }
+
+    handleModeChange(event) {
+        this.setState({
+            mode: event.target.value
+        });
+    }
+
     handleLastMeasurementsChange(event) {
         this.setState({
             lastMeasurements: event.target.value
@@ -87,7 +110,16 @@ class Panel extends React.Component {
                 </div>
                 <div className="row">
                     <div className="column">
-                        <div>Fan { this.state.fan ? 'ON' : 'OFF'}</div>
+                        <label htmlFor="mode">Mode</label>
+                        <select 
+                            id="mode"
+                            value={this.state.mode}
+                            onChange={this.handleModeChange}
+                        >
+                            <option value="NORMAL">NORMAL</option>
+                            <option value="FORCED_FAN_ON">FORCED_FAN_ON</option>
+                            <option value="FORCED_FAN_OFF">FORCED_FAN_OFF</option>
+                        </select>
                     </div>
                     <div className="column">
                         <label htmlFor="setpoint">Setpoint</label>
@@ -98,7 +130,7 @@ class Panel extends React.Component {
                             max="100"
                             step="0.1"
                             value={this.state.setpoint}
-                            onChange={this.handleLastMeasurementsChange} 
+                            onChange={this.handleSetpointChange}
                         />
                     </div>
                     <div className="column">
@@ -110,7 +142,7 @@ class Panel extends React.Component {
                             max="10"
                             step="0.5"
                             value={this.state.hysteresis}
-                            onChange={this.handleLastMeasurementsChange} 
+                            onChange={this.handleHysteresisChange} 
                         />
                     </div>
                     <div className="column">
@@ -126,6 +158,7 @@ class Panel extends React.Component {
                         <button type="button" onClick={this.getMeasurements}>
                             Refresh
                         </button>
+                        <div>Fan { this.state.fanOn ? 'ON' : 'OFF' }</div>
                     </div>
                 </div>
                 <div className="row">
