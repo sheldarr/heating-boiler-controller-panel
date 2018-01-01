@@ -8,6 +8,7 @@ const moment = require('moment');
 const express = require('express')
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 require('dotenv').config();
 
@@ -86,6 +87,8 @@ application.use(morgan('combined', {
         }
     }
 }));
+
+application.use(cors())
 
 application.use(bodyParser.json())
 
