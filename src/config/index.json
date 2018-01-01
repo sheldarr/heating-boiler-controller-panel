@@ -1,16 +1,19 @@
 {
     "server": {
         "api": {
+            "controller": {
+                "settings": "http://localhost:6060/api/controller/settings"
+            },
             "sensor": "http://localhost:6060/api/sensor"
         }
     },
     "sensors": [{
         "id": "output",
         "label": "Output Temparature",
-        "color": "#c5effd"
+        "color": "#fdaaaa"
     }, {
         "id": "input",
         "label": "Input Temparature",
-        "color": "#fdaaaa"
+        "color": "#c5effd"
     }]
 }

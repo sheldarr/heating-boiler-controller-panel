@@ -27,14 +27,20 @@ db
     .defaults({})
     .write();
 
+const controller = {
+    host: process.env.CONTROLLER.split('|')[0],
+    path: process.env.CONTROLLER.split('|')[1]
+};
+
 const sensors = process.env.SENSORS.split(' ').map((sensor) => {
     return {
         id: sensor.split('|')[0],
         host: sensor.split('|')[1],
         path: sensor.split('|')[2]
     }
-})
+});
 
+winston.info(`Configured controller ${JSON.stringify(controller)}`);
 winston.info(`Configured sensors ${JSON.stringify(sensors)}`);
 
 sensors.forEach((sensor) => {
@@ -107,25 +113,17 @@ application.get(
 );
 
 application.post(
-    '/api/sensor/:sensorId',
+    '/api/controller/settings',
     (request, response) => {
-        const sensor = sensors.find((sensor) => {
-            return sensor.id === request.params.sensorId;
-        });
-
-        if (!sensor) {
-            return response.sendStatus(404);
-        }
-
         const settings = request.body;
         
         if (!settings.setpoint || !settings.hysteresis || !settings.mode) {
             return response.sendStatus(400);
         }
 
-        winston.info(`Saving settings ${sensor.id} ${JSON.stringify(settings)}`);
+        winston.info(`Saving settings to controller ${JSON.stringify(settings)}`);
 
-        const requestUrl = `http://${sensor.host}${sensor.path}`;
+        const requestUrl = `http://${controller.host}${controller.path}`;
 
         axios
             .post(requestUrl, `${settings.setpoint} ${settings.hysteresis} ${settings.mode}`)

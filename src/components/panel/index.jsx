@@ -103,9 +103,7 @@ class Panel extends React.Component {
     }
 
     saveSettings() {
-        const sensor = config.sensors[1];
-
-        axios.post(`${config.server.api.sensor}/${sensor.id}`, {
+        axios.post(config.server.api.controller.settings, {
                 setpoint: this.state.setpoint,
                 hysteresis: this.state.hysteresis,
                 mode: this.state.mode
