@@ -26,6 +26,7 @@ class Panel extends React.Component {
         this.handleHysteresisChange = this.handleHysteresisChange.bind(this);
         this.handleModeChange = this.handleModeChange.bind(this);
         this.handleLastMeasurementsChange = this.handleLastMeasurementsChange.bind(this);
+        this.saveSettings = this.saveSettings.bind(this);
     }
 
     componentWillMount() {
@@ -100,6 +101,22 @@ class Panel extends React.Component {
         });
     }
 
+    saveSettings() {
+        const sensor = config.sensors[1];
+
+        axios.post(`${config.server.api.sensor}/${sensor.id}`, {
+                setpoint: this.state.setpoint,
+                hysteresis: this.state.hysteresis,
+                mode: this.state.mode
+            })
+            .then((response) => {
+                console.log('Settings saved');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     render() {
         return (
             <div className="container">
@@ -157,6 +174,9 @@ class Panel extends React.Component {
                     <div className="column">
                         <button type="button" onClick={this.getMeasurements}>
                             Refresh
+                        </button>
+                        <button type="button" onClick={this.saveSettings}>
+                            Save
                         </button>
                         <div>Fan { this.state.fanOn ? 'ON' : 'OFF' }</div>
                     </div>
