@@ -1,6 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 import Chart from '../chart/index.jsx';
 import config from '../../config/index.json';
@@ -72,7 +73,7 @@ class Panel extends React.Component {
                     })
                 })
                 .catch((error) => {
-                    console.error(error);
+                    toast.error(error);
                 });
         });
     }
@@ -110,10 +111,10 @@ class Panel extends React.Component {
                 mode: this.state.mode
             })
             .then((response) => {
-                console.log('Settings saved');
+                toast.success('Settings saved!');
             })
             .catch((error) => {
-                console.error(error);
+                toast.error(error);
             });
     }
 
@@ -123,6 +124,7 @@ class Panel extends React.Component {
                 <div className="row">
                     <div className="column">
                         <h1>heating-boiler-controller-plugin</h1>
+                        <ToastContainer />
                     </div>
                 </div>
                 <div className="row">
