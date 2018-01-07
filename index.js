@@ -48,14 +48,15 @@ new CronJob(process.env.CRON, () => {
     axios
         .get(requestUrl)
         .then((response) => {
-            winston.info(`Response: ${JSON.stringify(response.data)}`);
+            const { data } = response;
+            winston.info(`Response: ${JSON.stringify(data)}`);
 
             db.get('sensor.output')
                 .push({
                     id: uuidv4(),
                     timestamp,
                     date: moment(timestamp).format(),
-                    value: response.data.outputTemperature
+                    value: data.outputTemperature
                 })
                 .write();
             db.get('sensor.input')
@@ -63,14 +64,15 @@ new CronJob(process.env.CRON, () => {
                     id: uuidv4(),
                     timestamp,
                     date: moment(timestamp).format(),
-                    value: response.data.inputTemperature
+                    value: data.inputTemperature
                 })
                 .write();
             db.set('controller.settings', {
-                setpoint: response.data.setpoint,
-                hysteresis: response.data.hysteresis,
-                mode: response.data.mode,
-                fanOn: response.data.fanOn,
+                setpoint: data.setpoint,
+                hysteresis: data.hysteresis,
+                power: data.power,
+                mode: data.mode,
+                fanOn: data.fanOn,
             }).write();
         })
         .catch((error) => {
@@ -128,7 +130,12 @@ application.post(
     (request, response) => {
         const settings = request.body;
         
-        if (!settings.setpoint || !settings.hysteresis || !settings.mode) {
+        const notValidRequest = !settings.setpoint 
+            || !settings.hysteresis
+            || !settings.power
+            || !settings.mode;
+
+        if (notValidRequest) {
             return response.sendStatus(400);
         }
 
@@ -137,7 +144,7 @@ application.post(
         const requestUrl = `http://${controller.host}${controller.path}`;
 
         axios
-            .post(requestUrl, `${settings.setpoint} ${settings.hysteresis} ${settings.mode}`)
+            .post(requestUrl, `${settings.setpoint} ${settings.hysteresis} ${settings.power} ${settings.mode}`)
             .then((sensorResponse) => {
                 winston.info(`Response: ${JSON.stringify(sensorResponse.data)}`);
 
