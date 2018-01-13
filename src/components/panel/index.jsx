@@ -47,11 +47,14 @@ class Panel extends React.Component {
         axios
             .get(config.server.api.controller.settings)
             .then((response) => {
+                const { data } = response;
+                
                 this.setState({
-                    setpoint: response.data.setpoint,
-                    hysteresis: response.data.hysteresis,
-                    mode: response.data.mode,
-                    fanOn: response.data.fanOn,
+                    setpoint: data.setpoint,
+                    hysteresis: data.hysteresis,
+                    mode: data.mode,
+                    fanOn: data.fanOn,
+                    power: data.power
                 });
             })
             .catch((error) => {
