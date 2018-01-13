@@ -14,6 +14,7 @@ class Panel extends React.Component {
             fanOn: false,
             setpoint: 20,
             hysteresis: 2,
+            power: 50,
             mode: 'NORMAL',
             measurementsChartData: {
                 labels: [],
@@ -25,6 +26,7 @@ class Panel extends React.Component {
         this.getMeasurements = this.getMeasurements.bind(this);
         this.handleSetpointChange = this.handleSetpointChange.bind(this);
         this.handleHysteresisChange = this.handleHysteresisChange.bind(this);
+        this.handlePowerChange = this.handlePowerChange.bind(this);
         this.handleModeChange = this.handleModeChange.bind(this);
         this.handleLastMeasurementsChange = this.handleLastMeasurementsChange.bind(this);
         this.saveSettings = this.saveSettings.bind(this);
@@ -105,6 +107,12 @@ class Panel extends React.Component {
         });
     }
 
+    handlePowerChange(event) {
+        this.setState({
+            power: event.target.value
+        });
+    }
+
     handleLastMeasurementsChange(event) {
         this.setState({
             lastMeasurements: event.target.value
@@ -115,6 +123,7 @@ class Panel extends React.Component {
         axios.post(config.server.api.controller.settings, {
                 setpoint: this.state.setpoint,
                 hysteresis: this.state.hysteresis,
+                power: this.state.power,
                 mode: this.state.mode
             })
             .then((response) => {
@@ -136,16 +145,25 @@ class Panel extends React.Component {
                 </div>
                 <div className="row">
                     <div className="column">
-                        <label htmlFor="mode">Mode</label>
-                        <select 
-                            id="mode"
-                            value={this.state.mode}
-                            onChange={this.handleModeChange}
-                        >
-                            <option value="NORMAL">NORMAL</option>
-                            <option value="FORCED_FAN_ON">FORCED_FAN_ON</option>
-                            <option value="FORCED_FAN_OFF">FORCED_FAN_OFF</option>
-                        </select>
+                        <div className="row">
+                            <div className="column">
+                                <label htmlFor="mode">Mode</label>
+                                <select 
+                                    id="mode"
+                                    value={this.state.mode}
+                                    onChange={this.handleModeChange}
+                                >
+                                    <option value="NORMAL">NORMAL</option>
+                                    <option value="FORCED_FAN_ON">FORCED_FAN_ON</option>
+                                    <option value="FORCED_FAN_OFF">FORCED_FAN_OFF</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="column">
+                                <div>Fan { this.state.fanOn ? 'ON' : 'OFF' }</div>
+                            </div>
+                        </div>
                     </div>
                     <div className="column">
                         <label htmlFor="setpoint">Setpoint</label>
@@ -172,22 +190,46 @@ class Panel extends React.Component {
                         />
                     </div>
                     <div className="column">
-                        <label htmlFor="last-measurements">Last measurements</label>
-                        <input 
-                            id="last-measurements"
-                            type="number"
-                            value={this.state.lastMeasurements}
-                            onChange={this.handleLastMeasurementsChange} 
-                        />
+                        <div className="row">
+                            <div className="column">
+                                <label htmlFor="last-measurements">Last measurements</label>
+                                <input 
+                                    id="last-measurements"
+                                    type="number"
+                                    value={this.state.lastMeasurements}
+                                    onChange={this.handleLastMeasurementsChange} 
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="column">
+                                <button type="button" onClick={this.getMeasurements}>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="column">
-                        <button type="button" onClick={this.getMeasurements}>
-                            Refresh
-                        </button>
-                        <button type="button" onClick={this.saveSettings}>
-                            Save
-                        </button>
-                        <div>Fan { this.state.fanOn ? 'ON' : 'OFF' }</div>
+                        <div className="row">
+                            <div className="column">
+                                <label htmlFor="power">Power</label>
+                                <input 
+                                    id="power"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value={this.state.power}
+                                    onChange={this.handlePowerChange} 
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="column">
+                                <button type="button" onClick={this.saveSettings}>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="row">
