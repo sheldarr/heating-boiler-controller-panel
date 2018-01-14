@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
     entry: './entry.jsx',
@@ -41,6 +42,7 @@ module.exports = {
         new webpack.ProvidePlugin({
             'React': 'react',
         }),
-        new ExtractTextPlugin('style.css')
-    ],
+        new ExtractTextPlugin('style.css'),
+        new BundleAnalyzerPlugin()
+    ]
 };
