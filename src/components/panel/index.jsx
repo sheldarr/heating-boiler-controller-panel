@@ -57,11 +57,7 @@ class Panel extends React.Component {
                 const { data } = response;
                 
                 this.setState({
-                    setpoint: data.setpoint,
-                    hysteresis: data.hysteresis,
-                    mode: data.mode,
-                    fanOn: data.fanOn,
-                    power: data.power
+                    fanOn: data.fanOn
                 });
             })
             .catch((error) => {
@@ -100,6 +96,23 @@ class Panel extends React.Component {
                 datasets: []
             }
         });
+
+        axios
+            .get(`${config.server.api.controller.settings}`)
+            .then((response) => {
+                const { data } = response;
+                
+                this.setState({
+                    setpoint: data.setpoint,
+                    hysteresis: data.hysteresis,
+                    mode: data.mode,
+                    fanOn: data.fanOn,
+                    power: data.power
+                });
+            })
+            .catch((error) => {
+                toast.error(error.toString());
+            });
 
         config.sensors.forEach((sensor) => {
             axios
