@@ -45,7 +45,7 @@ class Panel extends React.Component {
         });
 
         axios
-            .get(config.server.api.controller.settings)
+            .get(`${config.server.api.controller.settings}/history`)
             .then((response) => {
                 const { data } = response;
                 
@@ -62,7 +62,7 @@ class Panel extends React.Component {
             });
         config.sensors.forEach((sensor) => {
             axios
-                .get(`${config.server.api.sensor}/${sensor.id}`)
+                .get(`${config.server.api.sensor}/${sensor.id}/history`)
                 .then((response) => {
                     const data = response.data.slice(-this.state.lastMeasurements) || [];
 

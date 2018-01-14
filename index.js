@@ -108,7 +108,7 @@ application.get(
 );
 
 application.get(
-    '/api/sensor/:sensorId',
+    '/api/sensor/:sensorId/history',
     (request, response) => {
         const sensor = db.get(`sensor.${request.params.sensorId}`).value();
 
@@ -117,7 +117,7 @@ application.get(
 );
 
 application.get(
-    '/api/controller/settings',
+    '/api/controller/settings/history',
     (request, response) => {
         const settings = db.get('controller.settings').value();
 
