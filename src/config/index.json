@@ -15,5 +15,6 @@
         "id": "input",
         "label": "Input Temparature",
         "color": "#c5effd"
-    }]
+    }],
+    "refreshDelay": 3000
 }

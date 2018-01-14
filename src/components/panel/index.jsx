@@ -16,6 +16,11 @@ class Panel extends React.Component {
             hysteresis: 2,
             power: 50,
             mode: 'NORMAL',
+            lastMeasurementsData: {
+                timestamp: moment(),
+                input: 0,
+                output: 0
+            },
             measurementsChartData: {
                 labels: [],
                 datasets: []
@@ -24,6 +29,7 @@ class Panel extends React.Component {
         }
 
         this.getMeasurements = this.getMeasurements.bind(this);
+        this.getHistoryMeasurements = this.getHistoryMeasurements.bind(this);
         this.handleSetpointChange = this.handleSetpointChange.bind(this);
         this.handleHysteresisChange = this.handleHysteresisChange.bind(this);
         this.handlePowerChange = this.handlePowerChange.bind(this);
@@ -33,19 +39,20 @@ class Panel extends React.Component {
     }
 
     componentWillMount() {
+        const intervalId = setInterval(this.getMeasurements, config.refreshDelay);
+        
+        this.setState({intervalId: intervalId});
         this.getMeasurements();
+        this.getHistoryMeasurements();
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalId);
     }
 
     getMeasurements() {
-        this.setState({
-            measurementsChartData: {
-                labels: this.state.measurementsChartData.labels,
-                datasets: []
-            }
-        });
-
         axios
-            .get(`${config.server.api.controller.settings}/history`)
+            .get(`${config.server.api.controller.settings}`)
             .then((response) => {
                 const { data } = response;
                 
@@ -60,6 +67,40 @@ class Panel extends React.Component {
             .catch((error) => {
                 toast.error(error.toString());
             });
+        
+        config.sensors.forEach((sensor) => {
+            axios
+                .get(`${config.server.api.sensor}/${sensor.id}`)
+                .then((response) => {
+                    const { data } = response;
+
+                    const lastMeasurementsData = Object.assign(
+                        {},
+                        this.state.lastMeasurementsData,
+                        {
+                            timestamp: moment()
+                        }
+                    );
+                    lastMeasurementsData[sensor.id] = data.value;
+
+                    this.setState({
+                        lastMeasurementsData
+                    })
+                })
+                .catch((error) => {
+                    toast.error(error.toString());
+                });
+        })
+    }
+
+    getHistoryMeasurements() {
+        this.setState({
+            measurementsChartData: {
+                labels: this.state.measurementsChartData.labels,
+                datasets: []
+            }
+        });
+
         config.sensors.forEach((sensor) => {
             axios
                 .get(`${config.server.api.sensor}/${sensor.id}/history`)
@@ -241,15 +282,8 @@ class Panel extends React.Component {
                                     </div>
                                 </div>
                                 <div className="column">
-                                    <div className="tags has-addons">
-                                        <span className="tag is-primary is-medium">FAN</span>
-                                        { this.state.fanOn 
-                                            ? <span className="tag is-success is-medium">ON</span>
-                                            : <span className="tag is-danger is-medium">OFF</span>
-                                        }
-                                    </div>
                                     <div className="buttons">
-                                        <button className="button is-primary" type="button" onClick={this.getMeasurements}>
+                                        <button className="button is-primary" type="button" onClick={this.getHistoryMeasurements}>
                                             <span className="icon is-small">
                                                 <i className="fas fa-refresh"></i>
                                             </span>
@@ -265,6 +299,35 @@ class Panel extends React.Component {
                                                 Save
                                             </span>
                                         </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="box">
+                            <div className="columns">
+                                <div className="column">
+                                    <div className="field is-grouped is-grouped-multiline">
+                                        <div className="control">
+                                            <div className="tags has-addons">
+                                                <span className="tag is-info is-medium">FAN</span>
+                                                { this.state.fanOn 
+                                                    ? <span className="tag is-success is-medium">ON</span>
+                                                    : <span className="tag is-danger is-medium">OFF</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="control">
+                                            <div className="tags has-addons">
+                                                <span className="tag is-info is-medium">Output</span>
+                                                <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.output } ℃</span>
+                                            </div>
+                                        </div>
+                                        <div className="control">
+                                            <div className="tags has-addons">
+                                                <span className="tag is-info is-medium">Input</span>
+                                                <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.input } ℃</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
