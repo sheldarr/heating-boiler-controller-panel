@@ -108,6 +108,33 @@ application.get(
 );
 
 application.get(
+    '/api/sensor/:sensorId',
+    (request, response) => {
+        const timestamp = Date.now();
+        const requestUrl = `http://${controller.host}${controller.path}`;
+    
+        winston.info(`${moment(timestamp).format()} GET ${requestUrl}...`);
+        
+        axios
+            .get(requestUrl)
+            .then((controllerResponse) => {
+                const { data } = controllerResponse;
+                winston.info(`Response: ${JSON.stringify(data)}`);
+                
+                response.send({
+                    id: uuidv4(),
+                        timestamp,
+                        date: moment(timestamp).format(),
+                        value: data[`${request.params.sensorId}Temperature`]
+                });
+            })
+            .catch((error) => {
+                winston.error(error);
+            });
+    }
+);
+
+application.get(
     '/api/sensor/:sensorId/history',
     (request, response) => {
         const sensor = db.get(`sensor.${request.params.sensorId}`).value();
@@ -122,6 +149,34 @@ application.get(
         const settings = db.get('controller.settings').value();
 
         response.send(settings);
+    }
+);
+
+application.get(
+    '/api/controller/settings',
+    (request, response) => {
+        const timestamp = Date.now();
+        const requestUrl = `http://${controller.host}${controller.path}`;
+    
+        winston.info(`${moment(timestamp).format()} GET ${requestUrl}...`);
+        
+        axios
+            .get(requestUrl)
+            .then((controllerResponse) => {
+                const { data } = controllerResponse;
+                winston.info(`Response: ${JSON.stringify(data)}`);
+                
+                response.send({
+                    setpoint: data.setpoint,
+                    hysteresis: data.hysteresis,
+                    power: data.power,
+                    mode: data.mode,
+                    fanOn: data.fanOn
+                });
+            })
+            .catch((error) => {
+                winston.error(error);
+            });
     }
 );
 
