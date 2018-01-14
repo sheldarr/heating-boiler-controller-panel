@@ -309,6 +309,12 @@ class Panel extends React.Component {
                                     <div className="field is-grouped is-grouped-multiline">
                                         <div className="control">
                                             <div className="tags has-addons">
+                                                <span className="tag is-info is-medium">Last sync</span>
+                                                <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.timestamp.format('HH:mm:ss') }</span>
+                                            </div>
+                                        </div>
+                                        <div className="control">
+                                            <div className="tags has-addons">
                                                 <span className="tag is-info is-medium">FAN</span>
                                                 { this.state.fanOn 
                                                     ? <span className="tag is-success is-medium">ON</span>
