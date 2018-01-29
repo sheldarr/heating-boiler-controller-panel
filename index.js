@@ -48,7 +48,7 @@ new CronJob(process.env.CRON, () => {
     axios
         .get(requestUrl)
         .then((response) => {
-            const { data } = response;
+            const data = response.data;
             winston.info(`Response: ${JSON.stringify(data)}`);
 
             db.get('sensor.output')
@@ -118,7 +118,7 @@ application.get(
         axios
             .get(requestUrl)
             .then((controllerResponse) => {
-                const { data } = controllerResponse;
+                const data = controllerResponse.data;
                 winston.info(`Response: ${JSON.stringify(data)}`);
                 
                 response.send({
@@ -163,7 +163,7 @@ application.get(
         axios
             .get(requestUrl)
             .then((controllerResponse) => {
-                const { data } = controllerResponse;
+                const data = controllerResponse.data;
                 winston.info(`Response: ${JSON.stringify(data)}`);
                 
                 response.send({
