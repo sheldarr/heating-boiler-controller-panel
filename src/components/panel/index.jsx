@@ -299,7 +299,7 @@ class Panel extends React.Component {
                             </div>
                         </div>
                         <div className="box">
-                            <div className="field is-grouped">
+                            <div className="field is-grouped is-grouped-multiline">
                                 <div className="control">
                                     <div className="tags has-addons">
                                         <span className="tag is-info is-medium">{__('Output')}</span>
