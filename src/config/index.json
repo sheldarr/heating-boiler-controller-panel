@@ -9,11 +9,11 @@
     },
     "sensors": [{
         "id": "output",
-        "label": "Output Temparature",
+        "label": "Output Temperature",
         "color": "#fdaaaa"
     }, {
         "id": "input",
-        "label": "Input Temparature",
+        "label": "Input Temperature",
         "color": "#c5effd"
     }],
     "refreshDelay": 5000

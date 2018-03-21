@@ -128,7 +128,7 @@ class Panel extends React.Component {
                             datasets: [
                                 ...this.state.measurementsChartData.datasets,
                                 {
-                                    label: sensor.label,
+                                    label: __(sensor.label),
                                     data: data.map((entry) => {
                                         return entry.value
                                     }),
@@ -184,7 +184,7 @@ class Panel extends React.Component {
                 mode: this.state.mode
             })
             .then((response) => {
-                toast.success('Settings saved!');
+                toast.success(__('Settings saved!'));
             })
             .catch((error) => {
                 toast.error(error.toString());
@@ -198,7 +198,7 @@ class Panel extends React.Component {
                     <div className="hero-body">
                         <div className="container">
                             <h1 className="title">
-                                heating-boiler-controller-panel
+                                {__('heating-boiler-controller-panel')}
                             </h1>
                             <h2 className="subtitle">
                                 v1.0
@@ -211,7 +211,7 @@ class Panel extends React.Component {
                     <div className="container">
                         <div className="box">
                             <div className="field">
-                                <label className="label" htmlFor="mode">Mode</label>
+                                <label className="label" htmlFor="mode">{__('Mode')}</label>
                                 <div className="control">
                                     <div className="select is-fullwidth">
                                         <select
@@ -220,15 +220,15 @@ class Panel extends React.Component {
                                             value={this.state.mode}
                                             onChange={this.handleModeChange}
                                         >
-                                            <option value="NORMAL">NORMAL</option>
-                                            <option value="FORCED_FAN_ON">FORCED_FAN_ON</option>
-                                            <option value="FORCED_FAN_OFF">FORCED_FAN_OFF</option>
+                                            <option value="NORMAL">{__('NORMAL')}</option>
+                                            <option value="FORCED_FAN_ON">{__('FORCED_FAN_ON')}</option>
+                                            <option value="FORCED_FAN_OFF">{__('FORCED_FAN_OFF')}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             <div className="field">
-                                <label className="label" htmlFor="setpoint">Setpoint</label>
+                                <label className="label" htmlFor="setpoint">{__('Setpoint')}</label>
                                 <div className="control">
                                     <input
                                         className="input" 
@@ -243,7 +243,7 @@ class Panel extends React.Component {
                                 </div>
                             </div>
                             <div className="field">
-                                <label className="label" htmlFor="hysteresis">Hysteresis</label>
+                                <label className="label" htmlFor="hysteresis">{__('Hysteresis')}</label>
                                 <div className="control">
                                     <input
                                         className="input"
@@ -258,7 +258,7 @@ class Panel extends React.Component {
                                 </div>
                             </div>
                             <div className="field">
-                                <label className="label" htmlFor="last-measurements">Last measurements</label>
+                                <label className="label" htmlFor="last-measurements">{__('Last measurements')}</label>
                                 <div className="control">
                                     <input 
                                         className="input"
@@ -270,7 +270,7 @@ class Panel extends React.Component {
                                 </div>
                             </div>
                             <div className="field">
-                                <label className="label" htmlFor="power">Power</label>
+                                <label className="label" htmlFor="power">{__('Power')}</label>
                                 <div className="control">
                                     <input 
                                         className="input"
@@ -286,14 +286,14 @@ class Panel extends React.Component {
                             <div className="field">
                                 <button className="button is-primary is-fullwidth" type="button" onClick={this.saveSettings}>
                                     <span>
-                                        Save
+                                        {__('Save')}
                                     </span>
                                 </button>
                             </div>
                             <div className="field">
                                 <button className="button is-primary is-fullwidth" type="button" onClick={this.getHistoryMeasurements}>
                                     <span>
-                                        Refresh
+                                        {__('Refresh')}
                                     </span>
                                 </button>
                             </div>
@@ -302,28 +302,28 @@ class Panel extends React.Component {
                             <div className="field is-grouped">
                                 <div className="control">
                                     <div className="tags has-addons">
-                                        <span className="tag is-info is-medium">Output</span>
-                                        <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.output } ℃</span>
+                                        <span className="tag is-info is-medium">{__('Output')}</span>
+                                        <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.output.toFixed(4) } ℃</span>
                                     </div>
                                 </div>
                                 <div className="control">
                                     <div className="tags has-addons">
-                                        <span className="tag is-info is-medium">Input</span>
-                                        <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.input } ℃</span>
+                                        <span className="tag is-info is-medium">{__('Input')}</span>
+                                        <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.input.toFixed(4) } ℃</span>
                                     </div>
                                 </div>
                                 <div className="control">
                                     <div className="tags has-addons">
-                                        <span className="tag is-info is-medium">FAN</span>
+                                        <span className="tag is-info is-medium">{__('Fan')}</span>
                                         { this.state.fanOn 
-                                            ? <span className="tag is-success is-medium">ON</span>
-                                            : <span className="tag is-danger is-medium">OFF</span>
+                                            ? <span className="tag is-success is-medium">{__('ON')}</span>
+                                            : <span className="tag is-danger is-medium">{__('OFF')}</span>
                                         }
                                     </div>
                                 </div>
                                 <div className="control">
                                     <div className="tags has-addons">
-                                        <span className="tag is-info is-medium">Last sync</span>
+                                        <span className="tag is-info is-medium">{__('Last sync')}</span>
                                         <span className="tag is-light is-medium">{ this.state.lastMeasurementsData.timestamp.format('HH:mm:ss') }</span>
                                     </div>
                                 </div>
