@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -10,38 +9,22 @@ module.exports = {
     },
     module: {
         rules: [{
+            enforce: "pre",
             test: /\.jsx?$/,
-            loader: 'babel-loader',
             exclude: /node_modules/,
-            query: {
-                presets: ['es2015', 'react']
-            }
+            loader: "eslint-loader",
+        }, {
+            test: /\.jsx?$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader',
         }, {
             test: /\.css$/,
             use: ExtractTextPlugin.extract({
               use: "css-loader"
             })
-        }, {
-            test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-            loader: "url-loader?limit=10000&mimetype=application/font-woff"
-        }, {
-            test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-            loader: "url-loader?limit=10000&mimetype=application/font-woff"
-        }, {
-            test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-            loader: "url-loader?limit=10000&mimetype=application/octet-stream"
-        }, {
-            test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-            loader: "file-loader"
-        }, {
-            test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-            loader: "url-loader?limit=10000&mimetype=image/svg+xml"
         }]
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            'React': 'react',
-        }),
         new ExtractTextPlugin('style.css'),
         new BundleAnalyzerPlugin()
     ]

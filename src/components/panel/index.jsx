@@ -183,7 +183,7 @@ class Panel extends React.Component {
                 power: this.state.power,
                 mode: this.state.mode
             })
-            .then((response) => {
+            .then(() => {
                 toast.success(__('Settings saved!'));
             })
             .catch((error) => {

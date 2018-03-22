@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import Panel from './src/components/panel/index.jsx';
 

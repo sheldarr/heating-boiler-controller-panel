@@ -26,11 +26,12 @@ const translations = {
 export default (key) => {
     const translation = translations.pl[key]
 
-    if(!translation) {
+        if(!translation) {
+        // eslint-disable-next-line no-console
         console.warn(`Missing translation ${key}`);
 
         return key;
-    };
+    }
 
     return translation;
 }
