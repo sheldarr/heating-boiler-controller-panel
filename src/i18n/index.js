@@ -18,7 +18,8 @@ const translations = {
         "OFF": "WYŁĄCZONY",
         "Last sync": "Ostatnia synchronizacja",
         "Input Temperature": "Temperatura Wejściowa",
-        "Output Temperature": "Temperatura Wyjściowa"
+        "Output Temperature": "Temperatura Wyjściowa",
+        "Settings saved!": "Ustawienia zapisane!"
     }
 }
 
