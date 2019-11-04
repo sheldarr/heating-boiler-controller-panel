@@ -2,11 +2,33 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { createServer } = require('http');
+const axios = require('axios');
 const next = require('next');
+const CronJob = require('cron').CronJob;
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, prettyPrint } = format;
+
+const logger = createLogger({
+  format: combine(timestamp(), prettyPrint()),
+  transports: [new transports.Console()],
+});
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+
+new CronJob(
+  process.env.CRON,
+  async () => {
+    logger.info(`REQUEST: ${process.env.CONTROLLER_URL}`);
+
+    const { data } = await axios.get(process.env.CONTROLLER_URL);
+
+    logger.info('RESPONSE:', data);
+  },
+  null,
+  true
+);
 
 app.prepare().then(() => {
   createServer((req, res) => {
@@ -16,6 +38,6 @@ app.prepare().then(() => {
       throw err;
     }
 
-    console.log('> Ready on http://localhost:3000');
+    logger.info('> Ready on http://localhost:3000');
   });
 });
