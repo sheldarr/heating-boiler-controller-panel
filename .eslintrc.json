@@ -28,7 +28,9 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "import/no-unresolved": "off",
     "import/order": "error",
-    "react/jsx-sort-props": ["error", { "shorthandFirst": true}],
+    "react/jsx-sort-props": ["error", {
+      "shorthandFirst": true
+    }],
     "sort-keys": "error",
     "prettier/prettier": "error"
   }
