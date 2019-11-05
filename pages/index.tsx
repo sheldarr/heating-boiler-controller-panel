@@ -21,9 +21,9 @@ const OutputTemperature = styled(Typography)`
 `;
 
 const FAN_MODES = {
-  NORMAL: 'NORMAL',
-  FORCED_FAN_ON: 'FORCED_FAN_ON',
   FORCED_FAN_OFF: 'FORCED_FAN_OFF',
+  FORCED_FAN_ON: 'FORCED_FAN_ON',
+  NORMAL: 'NORMAL',
 };
 
 interface Props {
@@ -62,10 +62,10 @@ const Home = ({
   const updateSettings = async (setpoint) => {
     axios
       .post('/api/settings', {
-        setpoint,
         hysteresis: 2.0,
-        power: 50.0,
         mode: FAN_MODES.NORMAL,
+        power: 50.0,
+        setpoint,
       })
       .then(() => {
         console.log('Success');
@@ -98,20 +98,20 @@ const Home = ({
             key={setpoint}
             marks={[
               {
-                value: 30,
                 label: '30°C',
+                value: 30,
               },
               {
-                value: 40,
                 label: '40°C',
+                value: 40,
               },
               {
-                value: 50,
                 label: '50°C',
+                value: 50,
               },
               {
-                value: 60,
                 label: '60°C',
+                value: 60,
               },
             ]}
             max={60}
@@ -129,13 +129,11 @@ const Home = ({
 };
 
 Home.getInitialProps = async () => {
-  const { data: settings } = await axios.get(
-    'http://0.0.0.0:3000/api/settings'
-  );
+  const baseUrl = process.browser ? `/api` : `http://0.0.0.0:3000/api`;
 
-  const { data: temperatures } = await axios.get(
-    'http://0.0.0.0:3000/api/temperatures'
-  );
+  const { data: settings } = await axios.get(`${baseUrl}/settings`);
+
+  const { data: temperatures } = await axios.get(`${baseUrl}/temperatures`);
 
   return {
     initialInputTemperature: temperatures.input,

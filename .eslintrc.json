@@ -29,6 +29,7 @@
     "import/no-unresolved": "off",
     "import/order": "error",
     "react/jsx-sort-props": ["error", { "shorthandFirst": true}],
+    "sort-keys": "error",
     "prettier/prettier": "error"
   }
 }

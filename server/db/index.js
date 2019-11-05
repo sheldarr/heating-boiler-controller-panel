@@ -8,11 +8,11 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 db.defaults({
-  'temperature.input': 0,
-  'temperature.output': 0,
-  'settings.setpoint': 40,
   'settings.hysteresis': 2,
   'settings.mode': 'NORMAL',
+  'settings.setpoint': 40,
+  'temperature.input': 0,
+  'temperature.output': 0,
 }).write();
 
 const getTemperatures = () => {
@@ -32,7 +32,7 @@ const getSettings = () => {
   const hysteresis = db.get('settings.hysteresis').value();
   const mode = db.get('settings.mode').value();
 
-  return { setpoint, hysteresis, mode };
+  return { hysteresis, mode, setpoint };
 };
 
 const setSettings = (setpoint, hysteresis, mode) => {
@@ -42,8 +42,8 @@ const setSettings = (setpoint, hysteresis, mode) => {
 };
 
 module.exports = {
-  setTemperatures,
-  getTemperatures,
   getSettings,
+  getTemperatures,
   setSettings,
+  setTemperatures,
 };
