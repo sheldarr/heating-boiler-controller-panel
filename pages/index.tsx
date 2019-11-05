@@ -26,11 +26,17 @@ const FAN_MODES = {
   FORCED_FAN_OFF: 'FORCED_FAN_OFF',
 };
 
+interface Props {
+  initialInputTemperature: number;
+  initialOutputTemperature: number;
+  initialSetpoint: number;
+}
+
 const Home = ({
   initialInputTemperature,
   initialOutputTemperature,
   initialSetpoint,
-}) => {
+}: Props) => {
   const [inputTemperature, setInputTemperature] = useState(
     initialInputTemperature
   );
