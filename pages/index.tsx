@@ -46,7 +46,7 @@ const Home = ({
   const [setpoint, setSetpoint] = useState(initialSetpoint);
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:3000/websocket');
+    const websocket = new WebSocket(`ws://${location.origin}/websocket`);
 
     websocket.onmessage = (event) => {
       const { inputTemperature, outputTemperature, setpoint } = JSON.parse(
@@ -129,7 +129,9 @@ const Home = ({
 };
 
 Home.getInitialProps = async () => {
-  const baseUrl = process.browser ? `/api` : `http://0.0.0.0:3000/api`;
+  const baseUrl = process.browser
+    ? `/api`
+    : `http://0.0.0.0:${process.env.APP_PORT}/api`;
 
   const { data: settings } = await axios.get(`${baseUrl}/settings`);
 
