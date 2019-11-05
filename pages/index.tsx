@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import styled from 'styled-components';
+import blue from '@material-ui/core/colors/blue';
 
 import NavBar from '../components/NavBar';
 
@@ -13,8 +14,15 @@ const StyledPaper = styled(Paper)`
   padding: 2rem;
 `;
 
+const OutputTemperature = styled(Typography)`
+  color: ${blue[500]};
+`;
+
 const Home = () => {
-  const [measurement, setMeasurement] = useState({});
+  const [measurement, setMeasurement] = useState({
+    inputTemperature: 0.0,
+    outputTemperature: 0.0,
+  });
 
   useEffect(() => {
     const websocket = new WebSocket('ws://localhost:3000/websocket');
@@ -36,10 +44,13 @@ const Home = () => {
       <Container>
         <StyledPaper>
           <Typography color="error" variant="h2" gutterBottom>
-            37.5 °C
+            {measurement.inputTemperature.toFixed(3)} °C
           </Typography>
-          {JSON.stringify(measurement)}
+          <OutputTemperature variant="h4" gutterBottom>
+            {measurement.outputTemperature.toFixed(3)} °C
+          </OutputTemperature>
         </StyledPaper>
+        <StyledPaper>{JSON.stringify(measurement)}</StyledPaper>
       </Container>
     </div>
   );
