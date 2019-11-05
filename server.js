@@ -10,6 +10,8 @@ const { createLogger, format, transports } = require('winston');
 const WebSocket = require('ws');
 const { combine, timestamp, simple } = format;
 
+const { setTemperatures } = require('./server/db');
+
 const logger = createLogger({
   format: combine(timestamp(), simple()),
   transports: [new transports.Console()],
@@ -17,7 +19,7 @@ const logger = createLogger({
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
-const handle = app.getRequestHandler();
+const handleByNext = app.getRequestHandler();
 
 const webSocketServer = new WebSocket.Server({ noServer: true });
 
@@ -27,6 +29,10 @@ new CronJob(
     logger.info(`REQUEST: ${process.env.CONTROLLER_URL}`);
 
     const { data } = await axios.get(process.env.CONTROLLER_URL);
+
+    const { inputTemperature, outputTemperature } = data;
+
+    setTemperatures(inputTemperature, outputTemperature);
 
     webSocketServer.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
@@ -42,7 +48,7 @@ new CronJob(
 
 app.prepare().then(() => {
   createServer((req, res) => {
-    handle(req, res);
+    handleByNext(req, res);
   })
     .on('upgrade', (request, socket, head) => {
       logger.info(head);
