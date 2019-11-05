@@ -3,6 +3,7 @@
 
 const { createServer } = require('http');
 const url = require('url');
+const { join } = require('path');
 const axios = require('axios');
 const next = require('next');
 const CronJob = require('cron').CronJob;
@@ -58,6 +59,15 @@ new CronJob(
 
 app.prepare().then(() => {
   createServer((req, res) => {
+    const parsedUrl = url.parse(req.url, true);
+    const { pathname } = parsedUrl;
+
+    if (pathname === '/service-worker.js') {
+      const filePath = join(__dirname, '.next', pathname);
+
+      app.serveStatic(req, res, filePath);
+    }
+
     handleByNext(req, res);
   })
     .on('upgrade', (request, socket, head) => {
