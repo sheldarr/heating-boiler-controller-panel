@@ -23,6 +23,9 @@ const handleByNext = app.getRequestHandler();
 
 const webSocketServer = new WebSocket.Server({ noServer: true });
 
+const APP_PORT = Number(process.env.APP_PORT);
+const LISTEN_ON_ALL_INTERFACES = '0.0.0.0';
+
 new CronJob(
   process.env.CRON,
   async () => {
@@ -69,11 +72,11 @@ app.prepare().then(() => {
         socket.destroy();
       }
     })
-    .listen(3000, (err) => {
+    .listen(APP_PORT, LISTEN_ON_ALL_INTERFACES, (err) => {
       if (err) {
         throw err;
       }
 
-      logger.info('> Ready on http://localhost:3000');
+      logger.info(`> Ready on http://${LISTEN_ON_ALL_INTERFACES}:${APP_PORT}`);
     });
 });
