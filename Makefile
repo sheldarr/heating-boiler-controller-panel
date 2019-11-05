@@ -22,8 +22,8 @@ dev: ## start development
 install: ## stop all services
 	$(DOCKER_COMPOSE_RUN_NODE) yarn install
 
-up: ## start all services
-	docker-compose up -d
+start: ## start production
+	docker-compose -f docker-compose.yml -f docker-compose.production.yml up
 
 down: ## stop all services
 	docker-compose down --remove-orphans
