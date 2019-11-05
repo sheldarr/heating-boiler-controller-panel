@@ -133,7 +133,7 @@ const Home = ({
 Home.getInitialProps = async () => {
   const baseUrl = process.browser
     ? `/api`
-    : `${process.env.PROTOCOL}://${process.env.HOSTNAME}}/api`;
+    : `${process.env.PROTOCOL}://${process.env.HOSTNAME}/api`;
 
   const { data: settings } = await axios.get(`${baseUrl}/settings`);
 
