@@ -85,10 +85,10 @@ const Home = ({
       <Container>
         <StyledPaper>
           <Typography gutterBottom color="error" variant="h2">
-            {inputTemperature.toFixed(3)} °C
+            {outputTemperature.toFixed(3)} °C
           </Typography>
           <OutputTemperature gutterBottom variant="h4">
-            {outputTemperature.toFixed(3)} °C
+            {inputTemperature.toFixed(3)} °C
           </OutputTemperature>
         </StyledPaper>
         <StyledPaper>
@@ -136,8 +136,6 @@ Home.getInitialProps = async () => {
   const { data: temperatures } = await axios.get(
     'http://0.0.0.0:3000/api/temperatures'
   );
-
-  console.log(temperatures);
 
   return {
     initialInputTemperature: temperatures.input,

@@ -10,7 +10,7 @@ const { createLogger, format, transports } = require('winston');
 const WebSocket = require('ws');
 const { combine, timestamp, simple } = format;
 
-const { setTemperatures } = require('./server/db');
+const { setTemperatures, setSettings } = require('./server/db');
 
 const logger = createLogger({
   format: combine(timestamp(), simple()),
@@ -30,9 +30,16 @@ new CronJob(
 
     const { data } = await axios.get(process.env.CONTROLLER_URL);
 
-    const { inputTemperature, outputTemperature } = data;
+    const {
+      inputTemperature,
+      outputTemperature,
+      setpoint,
+      hysteresis,
+      mode,
+    } = data;
 
     setTemperatures(inputTemperature, outputTemperature);
+    setSettings(setpoint, hysteresis, mode);
 
     webSocketServer.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {

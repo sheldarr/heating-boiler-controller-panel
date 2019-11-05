@@ -35,8 +35,15 @@ const getSettings = () => {
   return { setpoint, hysteresis, mode };
 };
 
+const setSettings = (setpoint, hysteresis, mode) => {
+  db.set('settings.setpoint', setpoint).write();
+  db.set('settings.hysteresis', hysteresis).write();
+  db.set('settings.mode', mode).write();
+};
+
 module.exports = {
   setTemperatures,
   getTemperatures,
   getSettings,
+  setSettings,
 };
