@@ -6,6 +6,11 @@ const withCSS = require('@zeit/next-css');
 
 module.exports = withOffline(
   withCSS({
+    env: {
+      HOSTNAME: process.env.HOSTNAME,
+      PROTOCOL: process.env.PROTOCOL,
+      WS_PROTOCOL: process.env.WS_PROTOCOL,
+    },
     webpack: (config) => {
       // Fixes npm packages that depend on `fs` module
       config.node = {
