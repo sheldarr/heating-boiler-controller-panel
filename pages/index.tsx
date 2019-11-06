@@ -7,6 +7,10 @@ import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import styled from 'styled-components';
 import blue from '@material-ui/core/colors/blue';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFan } from '@fortawesome/free-solid-svg-icons';
+import Grid from '@material-ui/core/Grid';
+import { useInterval } from 'react-use';
 
 import NavBar from '../components/NavBar';
 
@@ -18,6 +22,14 @@ const StyledPaper = styled(Paper)`
 
 const OutputTemperature = styled(Typography)`
   color: ${blue[500]};
+`;
+
+const FanContainer = styled.div`
+  text-align: center;
+`;
+
+const SliderContainer = styled.div`
+  margin-top: 3rem;
 `;
 
 const FAN_MODES = {
@@ -44,7 +56,12 @@ const Home = ({
     initialOutputTemperature
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
+  const [fanOn, setFanOn] = useState(true);
   const [lastSync, setLastSync] = useState(new Date());
+
+  useInterval(() => {
+    setFanOn(!fanOn);
+  }, 1000);
 
   useEffect(() => {
     const websocket = new WebSocket(
@@ -88,44 +105,61 @@ const Home = ({
       <NavBar lastSync={lastSync} />
       <Container>
         <StyledPaper>
-          <Typography gutterBottom color="error" variant="h2">
-            {outputTemperature.toFixed(3)} °C
-          </Typography>
-          <OutputTemperature gutterBottom variant="h4">
-            {inputTemperature.toFixed(3)} °C
-          </OutputTemperature>
-        </StyledPaper>
-        <StyledPaper>
-          {' '}
-          <Slider
-            defaultValue={setpoint}
-            key={setpoint}
-            marks={[
-              {
-                label: '30°C',
-                value: 30,
-              },
-              {
-                label: '40°C',
-                value: 40,
-              },
-              {
-                label: '50°C',
-                value: 50,
-              },
-              {
-                label: '60°C',
-                value: 60,
-              },
-            ]}
-            max={60}
-            min={30}
-            onChangeCommitted={(event, value) => {
-              updateSettings(value);
-            }}
-            step={1}
-            valueLabelDisplay="on"
-          />
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography gutterBottom color="error" variant="h2">
+                {outputTemperature.toFixed(3)} °C
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <OutputTemperature gutterBottom variant="h4">
+                {inputTemperature.toFixed(3)} °C
+              </OutputTemperature>
+            </Grid>
+            <Grid item xs={12}>
+              <FanContainer>
+                <FontAwesomeIcon
+                  color={fanOn ? 'green' : 'red'}
+                  icon={faFan}
+                  size="4x"
+                  spin={fanOn}
+                />
+              </FanContainer>
+            </Grid>
+            <Grid item xs={12}>
+              <SliderContainer>
+                <Slider
+                  defaultValue={setpoint}
+                  key={setpoint}
+                  marks={[
+                    {
+                      label: '30°C',
+                      value: 30,
+                    },
+                    {
+                      label: '40°C',
+                      value: 40,
+                    },
+                    {
+                      label: '50°C',
+                      value: 50,
+                    },
+                    {
+                      label: '60°C',
+                      value: 60,
+                    },
+                  ]}
+                  max={60}
+                  min={30}
+                  onChangeCommitted={(event, value) => {
+                    updateSettings(value);
+                  }}
+                  step={1}
+                  valueLabelDisplay="on"
+                />
+              </SliderContainer>
+            </Grid>
+          </Grid>
         </StyledPaper>
       </Container>
     </div>
