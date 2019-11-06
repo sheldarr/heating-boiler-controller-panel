@@ -11,7 +11,7 @@ const { createLogger, format, transports } = require('winston');
 const WebSocket = require('ws');
 const { combine, timestamp, simple } = format;
 
-const { setTemperatures, setSettings } = require('./server/db');
+const { setStatus } = require('./server/db');
 
 const logger = createLogger({
   format: combine(timestamp(), simple()),
@@ -37,17 +37,25 @@ new CronJob(
     const {
       inputTemperature,
       outputTemperature,
+      fanOn,
+      hysteresis,
+      mode,
+      setpoint,
+    } = data;
+
+    setStatus(
+      inputTemperature,
+      outputTemperature,
       setpoint,
       hysteresis,
       mode,
-    } = data;
-
-    setTemperatures(inputTemperature, outputTemperature);
-    setSettings(setpoint, hysteresis, mode);
+      fanOn,
+      new Date()
+    );
 
     webSocketServer.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(data));
+        client.send(JSON.stringify({ ...data, lastSync: new Date() }));
       }
     });
 

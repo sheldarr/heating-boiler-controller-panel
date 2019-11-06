@@ -40,13 +40,17 @@ const FAN_MODES = {
 };
 
 interface Props {
+  initialFanOn: boolean;
   initialInputTemperature: number;
+  initialLastSync: string;
   initialOutputTemperature: number;
   initialSetpoint: number;
 }
 
 const Home = ({
+  initialFanOn,
   initialInputTemperature,
+  initialLastSync,
   initialOutputTemperature,
   initialSetpoint,
 }: Props) => {
@@ -57,8 +61,8 @@ const Home = ({
     initialOutputTemperature
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
-  const [fanOn, setFanOn] = useState(true);
-  const [lastSync, setLastSync] = useState(new Date());
+  const [fanOn, setFanOn] = useState(initialFanOn);
+  const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useInterval(() => {
     setFanOn(!fanOn);
@@ -70,12 +74,17 @@ const Home = ({
     );
 
     websocket.onmessage = (event) => {
-      const { inputTemperature, outputTemperature, setpoint } = JSON.parse(
-        event.data
-      );
+      const {
+        fanOn,
+        inputTemperature,
+        lastSync,
+        outputTemperature,
+        setpoint,
+      } = JSON.parse(event.data);
 
-      setLastSync(new Date());
+      setFanOn(fanOn);
       setInputTemperature(inputTemperature);
+      setLastSync(new Date(lastSync));
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
     };
@@ -172,14 +181,16 @@ Home.getInitialProps = async () => {
     ? `/api`
     : `${process.env.PROTOCOL}://${process.env.HOSTNAME}/api`;
 
-  const { data: settings } = await axios.get(`${baseUrl}/settings`);
-
-  const { data: temperatures } = await axios.get(`${baseUrl}/temperatures`);
+  const {
+    data: { fanOn, inputTemperature, lastSync, outputTemperature, setpoint },
+  } = await axios.get(`${baseUrl}/controller/status`);
 
   return {
-    initialInputTemperature: temperatures.input,
-    initialOutputTemperature: temperatures.output,
-    initialSetpoint: settings.setpoint,
+    initialFanOn: fanOn,
+    initialInputTemperature: inputTemperature,
+    initialLastSync: lastSync,
+    initialOutputTemperature: outputTemperature,
+    initialSetpoint: setpoint,
   };
 };
 

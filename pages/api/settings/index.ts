@@ -1,15 +1,7 @@
 import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import db from '../../../server/db';
-
 export default (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'GET') {
-    const settings = db.getSettings();
-
-    return res.send(settings);
-  }
-
   if (req.method === 'POST') {
     const { setpoint, hysteresis, power, mode } = req.body;
 

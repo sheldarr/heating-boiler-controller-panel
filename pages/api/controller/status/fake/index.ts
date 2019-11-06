@@ -8,7 +8,6 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       inputTemperature: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
       mode: 'NORMAL',
       outputTemperature: Math.floor(Math.random() * (60 - 30 + 1)) + 30,
-      power: 50,
       setpoint: 50,
     });
   }

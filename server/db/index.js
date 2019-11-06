@@ -8,42 +8,54 @@ const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 db.defaults({
+  'settings.fanOn': false,
   'settings.hysteresis': 2,
   'settings.mode': 'NORMAL',
   'settings.setpoint': 40,
+  'status.lastSync': new Date(),
   'temperature.input': 0,
   'temperature.output': 0,
 }).write();
 
-const getTemperatures = () => {
-  const input = db.get('temperature.input').value();
-  const output = db.get('temperature.output').value();
+const getStatus = () => {
+  const fanOn = db.get('settings.fanOn').value();
+  const hysteresis = db.get('settings.hysteresis').value();
+  const inputTemperature = db.get('temperature.input').value();
+  const lastSync = db.get('temperature.input').value();
+  const mode = db.get('settings.mode').value();
+  const outputTemperature = db.get('temperature.output').value();
+  const setpoint = db.get('settings.setpoint').value();
 
-  return { input, output };
+  return {
+    fanOn,
+    hysteresis,
+    inputTemperature,
+    lastSync,
+    mode,
+    outputTemperature,
+    setpoint,
+  };
 };
 
-const setTemperatures = (inputTemperature, outputTemperature) => {
+const setStatus = (
+  inputTemperature,
+  outputTemperature,
+  setpoint,
+  hysteresis,
+  mode,
+  fanOn,
+  lastSync
+) => {
+  db.set('settings.fanOn', fanOn).write();
+  db.set('settings.setpoint', setpoint).write();
+  db.set('settings.hysteresis', hysteresis).write();
+  db.set('settings.mode', mode).write();
+  db.set('status.lastSync', lastSync).write();
   db.set('temperature.input', inputTemperature).write();
   db.set('temperature.output', outputTemperature).write();
 };
 
-const getSettings = () => {
-  const setpoint = db.get('settings.setpoint').value();
-  const hysteresis = db.get('settings.hysteresis').value();
-  const mode = db.get('settings.mode').value();
-
-  return { hysteresis, mode, setpoint };
-};
-
-const setSettings = (setpoint, hysteresis, mode) => {
-  db.set('settings.setpoint', setpoint).write();
-  db.set('settings.hysteresis', hysteresis).write();
-  db.set('settings.mode', mode).write();
-};
-
 module.exports = {
-  getSettings,
-  getTemperatures,
-  setSettings,
-  setTemperatures,
+  getStatus,
+  setStatus,
 };
