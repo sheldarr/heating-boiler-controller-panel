@@ -65,7 +65,7 @@ app.prepare().then(() => {
     if (pathname === '/service-worker.js') {
       const filePath = join(__dirname, '.next', pathname);
 
-      app.serveStatic(req, res, filePath);
+      return app.serveStatic(req, res, filePath);
     }
 
     handleByNext(req, res);
