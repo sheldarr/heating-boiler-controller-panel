@@ -17,7 +17,7 @@ const NavBar = ({ lastSync }: Props) => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <StyledHeader variant="h6">Panel</StyledHeader>
+        <StyledHeader variant="h6">Piec</StyledHeader>
         <span>{format(lastSync, 'HH:mm:ss')}</span>
       </Toolbar>
     </AppBar>

@@ -82,7 +82,7 @@ const Home = ({
   return (
     <div>
       <Head>
-        <title>heating-boiler-controller-panel</title>
+        <title>Piec</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
       <NavBar lastSync={lastSync} />
