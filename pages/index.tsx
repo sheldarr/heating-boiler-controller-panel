@@ -44,6 +44,7 @@ const Home = ({
     initialOutputTemperature
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
+  const [lastSync, setLastSync] = useState(new Date());
 
   useEffect(() => {
     const websocket = new WebSocket(
@@ -55,6 +56,7 @@ const Home = ({
         event.data
       );
 
+      setLastSync(new Date());
       setInputTemperature(inputTemperature);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
@@ -83,7 +85,7 @@ const Home = ({
         <title>heating-boiler-controller-panel</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
-      <NavBar />
+      <NavBar lastSync={lastSync} />
       <Container>
         <StyledPaper>
           <Typography gutterBottom color="error" variant="h2">
