@@ -25,11 +25,12 @@ const OutputTemperature = styled(Typography)`
 `;
 
 const FanContainer = styled.div`
+  margin-top: 2rem;
   text-align: center;
 `;
 
 const SliderContainer = styled.div`
-  margin-top: 3rem;
+  margin-top: 4rem;
 `;
 
 const FAN_MODES = {
