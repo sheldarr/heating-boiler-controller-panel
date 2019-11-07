@@ -1,71 +1,28 @@
-/* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { createServer } = require('http');
 const url = require('url');
 const { join } = require('path');
-const axios = require('axios');
 const next = require('next');
 const CronJob = require('cron').CronJob;
-const { createLogger, format, transports } = require('winston');
-const WebSocket = require('ws');
-const { combine, timestamp, simple } = format;
 
-const { setStatus } = require('./server/db');
-
-const logger = createLogger({
-  format: combine(timestamp(), simple()),
-  transports: [new transports.Console()],
-});
+const logger = require('./server/logger');
+const initializeAxios = require('./server/axios');
+const {
+  broadcastControllerStatus,
+  webSocketServer,
+} = require('./server/websocket');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handleByNext = app.getRequestHandler();
 
-const webSocketServer = new WebSocket.Server({ noServer: true });
-
 const APP_PORT = Number(process.env.APP_PORT);
 const LISTEN_ON_ALL_INTERFACES = '0.0.0.0';
 
-new CronJob(
-  process.env.CRON,
-  async () => {
-    logger.info(`REQUEST: ${process.env.CONTROLLER_STATUS_API_URL}`);
+initializeAxios();
 
-    const { data } = await axios.get(process.env.CONTROLLER_STATUS_API_URL);
-
-    const {
-      inputTemperature,
-      outputTemperature,
-      fanOn,
-      hysteresis,
-      mode,
-      setpoint,
-    } = data;
-
-    const lastSync = new Date();
-
-    setStatus(
-      inputTemperature,
-      outputTemperature,
-      setpoint,
-      hysteresis,
-      mode,
-      fanOn,
-      lastSync
-    );
-
-    webSocketServer.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ ...data, lastSync }));
-      }
-    });
-
-    logger.info('RESPONSE:', data);
-  },
-  null,
-  true
-);
+new CronJob(process.env.CRON, broadcastControllerStatus, null, true);
 
 app.prepare().then(() => {
   createServer((req, res) => {
