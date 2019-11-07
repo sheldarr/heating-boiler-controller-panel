@@ -69,6 +69,7 @@ const Home = ({
     initialOutputTemperature
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
+  const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
   const [mode, setMode] = useState('NORMAL');
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
@@ -97,43 +98,52 @@ const Home = ({
     };
   }, []);
 
-  const updateSetpoint = async (setpoint) => {
+  const updateSetpoint = async (newSetpoint) => {
     axios
       .post('/api/settings', {
         hysteresis: 2.0,
         mode,
         power: 50.0,
-        setpoint,
+        setpoint: newSetpoint,
       })
       .then(() => {
-        enqueueSnackbar(`Ustawiono termostat na ${setpoint}°C`, {
+        setDraftSetpoint(newSetpoint);
+        enqueueSnackbar(`Ustawiono termostat na ${newSetpoint}°C`, {
           variant: 'success',
         });
       })
       .catch(() => {
-        enqueueSnackbar(`Nie udało się ustawić termostatu na ${setpoint}°C`, {
-          variant: 'error',
-        });
+        setDraftSetpoint(setpoint);
+        enqueueSnackbar(
+          `Nie udało się ustawić termostatu na ${newSetpoint}°C`,
+          {
+            variant: 'error',
+          }
+        );
       });
   };
 
-  const updateMode = async (mode) => {
+  const updateMode = async (newMode) => {
     axios
       .post('/api/settings', {
         hysteresis: 2.0,
-        mode,
+        mode: newMode,
         power: 50.0,
         setpoint,
       })
       .then(() => {
-        enqueueSnackbar(`Ustawiono tryb ${modeLabelMap[mode]}`, {
+        setMode(newMode);
+        enqueueSnackbar(`Ustawiono tryb ${modeLabelMap[newMode]}`, {
           variant: 'success',
         });
       })
       .catch(() => {
-        enqueueSnackbar(`Nie udało się ustawić trybu ${modeLabelMap[mode]}`, {
-          variant: 'error',
-        });
+        enqueueSnackbar(
+          `Nie udało się ustawić trybu ${modeLabelMap[newMode]}`,
+          {
+            variant: 'error',
+          }
+        );
       });
   };
 
@@ -182,8 +192,6 @@ const Home = ({
               <Grid item xs={12}>
                 <SliderContainer>
                   <Slider
-                    defaultValue={setpoint}
-                    key={setpoint}
                     marks={[
                       {
                         label: '30°C',
@@ -204,10 +212,14 @@ const Home = ({
                     ]}
                     max={60}
                     min={30}
+                    onChange={(event, value) => {
+                      setDraftSetpoint(value as number);
+                    }}
                     onChangeCommitted={(event, value) => {
                       updateSetpoint(value);
                     }}
                     step={1}
+                    value={draftSetpoint}
                     valueLabelDisplay="on"
                   />
                 </SliderContainer>
