@@ -14,7 +14,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     const settings = `${setpoint} ${hysteresis} ${power} ${mode}`;
 
     axios
-      .post(process.env.CONTROLLER_STATUS_API_URL, settings)
+      .post(process.env.CONTROLLER_API_URL, settings)
       .then(() => {
         return res.status(200).send('OK');
       })

@@ -3,7 +3,6 @@
 const axios = require('axios');
 const WebSocket = require('ws');
 
-const logger = require('../logger');
 const { setStatus } = require('../db');
 
 const webSocketServer = new WebSocket.Server({ noServer: true });
@@ -17,9 +16,7 @@ const broadcast = (message) => {
 };
 
 const broadcastControllerStatus = async () => {
-  logger.info(`REQUEST: ${process.env.CONTROLLER_STATUS_API_URL}`);
-
-  const { data } = await axios.get(process.env.CONTROLLER_STATUS_API_URL);
+  const { data } = await axios.get(process.env.CONTROLLER_API_URL);
 
   const {
     inputTemperature,
@@ -43,8 +40,6 @@ const broadcastControllerStatus = async () => {
   );
 
   broadcast({ ...data, lastSync });
-
-  logger.info('RESPONSE:', data);
 };
 
 module.exports = {

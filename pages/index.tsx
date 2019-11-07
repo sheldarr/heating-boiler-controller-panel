@@ -76,7 +76,9 @@ const Home = ({
 
   useEffect(() => {
     const websocket = new WebSocket(
-      `${process.env.WS_PROTOCOL}://${process.env.HOSTNAME}/websocket`
+      `${location.protocol === 'https' ? 'wss' : 'ws'}://${
+        location.host
+      }/websocket`
     );
 
     websocket.onmessage = (event) => {
@@ -245,7 +247,7 @@ const Home = ({
 Home.getInitialProps = async () => {
   const {
     data: { fanOn, inputTemperature, lastSync, outputTemperature, setpoint },
-  } = await axios.get(process.env.CONTROLLER_STATUS_API_URL);
+  } = await axios.get(`${process.env.APP_API_URL}/controller/status`);
 
   return {
     initialFanOn: fanOn,
