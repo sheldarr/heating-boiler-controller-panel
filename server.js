@@ -43,6 +43,8 @@ new CronJob(
       setpoint,
     } = data;
 
+    const lastSync = new Date();
+
     setStatus(
       inputTemperature,
       outputTemperature,
@@ -50,12 +52,12 @@ new CronJob(
       hysteresis,
       mode,
       fanOn,
-      new Date()
+      lastSync
     );
 
     webSocketServer.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ ...data, lastSync: new Date() }));
+        client.send(JSON.stringify({ ...data, lastSync }));
       }
     });
 

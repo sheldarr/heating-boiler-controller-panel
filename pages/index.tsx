@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@material-ui/core/Grid';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 import NavBar from '../components/NavBar';
 
@@ -29,15 +31,14 @@ const FanContainer = styled.div`
   text-align: center;
 `;
 
+const ToggleButtonsContainer = styled.div`
+  margin-top: 2rem;
+  text-align: center;
+`;
+
 const SliderContainer = styled.div`
   margin-top: 4rem;
 `;
-
-const FAN_MODES = {
-  FORCED_FAN_OFF: 'FORCED_FAN_OFF',
-  FORCED_FAN_ON: 'FORCED_FAN_ON',
-  NORMAL: 'NORMAL',
-};
 
 interface Props extends WithSnackbarProps {
   initialFanOn: boolean;
@@ -46,6 +47,12 @@ interface Props extends WithSnackbarProps {
   initialOutputTemperature: number;
   initialSetpoint: number;
 }
+
+const modeLabelMap = {
+  FORCED_FAN_OFF: 'STALE WYŁĄCZONY',
+  FORCED_FAN_ON: 'STALE WŁĄCZONY',
+  NORMAL: 'TERMOSTAT',
+};
 
 const Home = ({
   enqueueSnackbar,
@@ -63,6 +70,7 @@ const Home = ({
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
+  const [mode, setMode] = useState('NORMAL');
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
@@ -75,6 +83,7 @@ const Home = ({
         fanOn,
         inputTemperature,
         lastSync,
+        mode,
         outputTemperature,
         setpoint,
       } = JSON.parse(event.data);
@@ -82,16 +91,17 @@ const Home = ({
       setFanOn(fanOn);
       setInputTemperature(inputTemperature);
       setLastSync(new Date(lastSync));
+      setMode(mode);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
     };
   }, []);
 
-  const updateSettings = async (setpoint) => {
+  const updateSetpoint = async (setpoint) => {
     axios
       .post('/api/settings', {
         hysteresis: 2.0,
-        mode: FAN_MODES.NORMAL,
+        mode,
         power: 50.0,
         setpoint,
       })
@@ -102,6 +112,26 @@ const Home = ({
       })
       .catch(() => {
         enqueueSnackbar(`Nie udało się ustawić termostatu na ${setpoint}°C`, {
+          variant: 'error',
+        });
+      });
+  };
+
+  const updateMode = async (mode) => {
+    axios
+      .post('/api/settings', {
+        hysteresis: 2.0,
+        mode,
+        power: 50.0,
+        setpoint,
+      })
+      .then(() => {
+        enqueueSnackbar(`Ustawiono tryb ${modeLabelMap[mode]}`, {
+          variant: 'success',
+        });
+      })
+      .catch(() => {
+        enqueueSnackbar(`Nie udało się ustawić trybu ${modeLabelMap[mode]}`, {
           variant: 'error',
         });
       });
@@ -153,12 +183,33 @@ const Home = ({
                   max={60}
                   min={30}
                   onChangeCommitted={(event, value) => {
-                    updateSettings(value);
+                    updateSetpoint(value);
                   }}
                   step={1}
                   valueLabelDisplay="on"
                 />
               </SliderContainer>
+            </Grid>
+            <Grid item xs={12}>
+              <ToggleButtonsContainer>
+                <ToggleButtonGroup
+                  exclusive
+                  onChange={(event, value) => {
+                    updateMode(value);
+                  }}
+                  value={mode}
+                >
+                  <ToggleButton key={1} value="FORCED_FAN_OFF">
+                    Stale wyłączony
+                  </ToggleButton>
+                  <ToggleButton key={2} value="NORMAL">
+                    Termostat
+                  </ToggleButton>
+                  <ToggleButton key={3} value="FORCED_FAN_ON">
+                    Stale włączony
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </ToggleButtonsContainer>
             </Grid>
             <Grid item xs={12}>
               <FanContainer>
