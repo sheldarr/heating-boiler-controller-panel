@@ -76,7 +76,7 @@ const Home = ({
 
   useEffect(() => {
     const websocket = new WebSocket(
-      `${location.protocol === 'https' ? 'wss' : 'ws'}://${
+      `${location.protocol === 'https:' ? 'wss' : 'ws'}://${
         location.host
       }/websocket`
     );
