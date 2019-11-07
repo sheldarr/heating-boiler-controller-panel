@@ -10,7 +10,7 @@ import blue from '@material-ui/core/colors/blue';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@material-ui/core/Grid';
-import { withSnackbar } from 'notistack';
+import { withSnackbar, WithSnackbarProps } from 'notistack';
 
 import NavBar from '../components/NavBar';
 
@@ -39,8 +39,7 @@ const FAN_MODES = {
   NORMAL: 'NORMAL',
 };
 
-interface Props {
-  enqueueSnackbar: any;
+interface Props extends WithSnackbarProps {
   initialFanOn: boolean;
   initialInputTemperature: number;
   initialLastSync: string;
