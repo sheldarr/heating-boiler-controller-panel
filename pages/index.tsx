@@ -10,7 +10,7 @@ import blue from '@material-ui/core/colors/blue';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@material-ui/core/Grid';
-import { useInterval } from 'react-use';
+import { withSnackbar } from 'notistack';
 
 import NavBar from '../components/NavBar';
 
@@ -40,6 +40,7 @@ const FAN_MODES = {
 };
 
 interface Props {
+  enqueueSnackbar: any;
   initialFanOn: boolean;
   initialInputTemperature: number;
   initialLastSync: string;
@@ -48,6 +49,7 @@ interface Props {
 }
 
 const Home = ({
+  enqueueSnackbar,
   initialFanOn,
   initialInputTemperature,
   initialLastSync,
@@ -63,10 +65,6 @@ const Home = ({
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
-
-  useInterval(() => {
-    setFanOn(!fanOn);
-  }, 1000);
 
   useEffect(() => {
     const websocket = new WebSocket(
@@ -99,10 +97,14 @@ const Home = ({
         setpoint,
       })
       .then(() => {
-        console.log('Success');
+        enqueueSnackbar(`Ustawiono termostat na ${setpoint}°C`, {
+          variant: 'success',
+        });
       })
-      .catch((error) => {
-        console.log(error.toString());
+      .catch(() => {
+        enqueueSnackbar(`Nie udało się ustawić termostatu na ${setpoint}°C`, {
+          variant: 'error',
+        });
       });
   };
 
@@ -125,16 +127,6 @@ const Home = ({
               <OutputTemperature gutterBottom variant="h4">
                 {inputTemperature.toFixed(3)} °C
               </OutputTemperature>
-            </Grid>
-            <Grid item xs={12}>
-              <FanContainer>
-                <FontAwesomeIcon
-                  color={fanOn ? 'green' : 'red'}
-                  icon={faFan}
-                  size="4x"
-                  spin={fanOn}
-                />
-              </FanContainer>
             </Grid>
             <Grid item xs={12}>
               <SliderContainer>
@@ -169,6 +161,16 @@ const Home = ({
                 />
               </SliderContainer>
             </Grid>
+            <Grid item xs={12}>
+              <FanContainer>
+                <FontAwesomeIcon
+                  color={fanOn ? 'green' : 'red'}
+                  icon={faFan}
+                  size="4x"
+                  spin={fanOn}
+                />
+              </FanContainer>
+            </Grid>
           </Grid>
         </StyledPaper>
       </Container>
@@ -194,4 +196,6 @@ Home.getInitialProps = async () => {
   };
 };
 
-export default Home;
+// eslint-disable-next-line
+//@ts-ignore
+export default withSnackbar(Home);
