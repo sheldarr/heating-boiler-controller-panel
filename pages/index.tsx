@@ -158,39 +158,6 @@ const Home = ({
               </OutputTemperature>
             </Grid>
             <Grid item xs={12}>
-              <SliderContainer>
-                <Slider
-                  defaultValue={setpoint}
-                  key={setpoint}
-                  marks={[
-                    {
-                      label: '30°C',
-                      value: 30,
-                    },
-                    {
-                      label: '40°C',
-                      value: 40,
-                    },
-                    {
-                      label: '50°C',
-                      value: 50,
-                    },
-                    {
-                      label: '60°C',
-                      value: 60,
-                    },
-                  ]}
-                  max={60}
-                  min={30}
-                  onChangeCommitted={(event, value) => {
-                    updateSetpoint(value);
-                  }}
-                  step={1}
-                  valueLabelDisplay="on"
-                />
-              </SliderContainer>
-            </Grid>
-            <Grid item xs={12}>
               <ToggleButtonsContainer>
                 <ToggleButtonGroup
                   exclusive
@@ -211,6 +178,41 @@ const Home = ({
                 </ToggleButtonGroup>
               </ToggleButtonsContainer>
             </Grid>
+            {mode === 'NORMAL' && (
+              <Grid item xs={12}>
+                <SliderContainer>
+                  <Slider
+                    defaultValue={setpoint}
+                    key={setpoint}
+                    marks={[
+                      {
+                        label: '30°C',
+                        value: 30,
+                      },
+                      {
+                        label: '40°C',
+                        value: 40,
+                      },
+                      {
+                        label: '50°C',
+                        value: 50,
+                      },
+                      {
+                        label: '60°C',
+                        value: 60,
+                      },
+                    ]}
+                    max={60}
+                    min={30}
+                    onChangeCommitted={(event, value) => {
+                      updateSetpoint(value);
+                    }}
+                    step={1}
+                    valueLabelDisplay="on"
+                  />
+                </SliderContainer>
+              </Grid>
+            )}
             <Grid item xs={12}>
               <FanContainer>
                 <FontAwesomeIcon
