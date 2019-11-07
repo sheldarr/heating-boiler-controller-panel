@@ -51,7 +51,7 @@ interface Props extends WithSnackbarProps {
 const modeLabelMap = {
   FORCED_FAN_OFF: 'STALE WYŁĄCZONY',
   FORCED_FAN_ON: 'STALE WŁĄCZONY',
-  NORMAL: 'TERMOSTAT',
+  THERMOSTAT: 'TERMOSTAT',
 };
 
 const Home = ({
@@ -128,7 +128,7 @@ const Home = ({
     axios
       .post('/api/settings', {
         hysteresis: 2.0,
-        mode: newMode,
+        mode: newMode === 'THERMOSTAT' ? 'NORMAL' : newMode,
         setpoint,
       })
       .then(() => {
@@ -179,7 +179,7 @@ const Home = ({
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
                     OFF
                   </ToggleButton>
-                  <ToggleButton key={2} value="NORMAL">
+                  <ToggleButton key={2} value="THERMOSTAT">
                     TERMOSTAT
                   </ToggleButton>
                   <ToggleButton key={3} value="FORCED_FAN_ON">
