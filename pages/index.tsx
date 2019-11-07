@@ -105,7 +105,6 @@ const Home = ({
       .post('/api/settings', {
         hysteresis: 2.0,
         mode,
-        power: 50.0,
         setpoint: newSetpoint,
       })
       .then(() => {
@@ -130,7 +129,6 @@ const Home = ({
       .post('/api/settings', {
         hysteresis: 2.0,
         mode: newMode,
-        power: 50.0,
         setpoint,
       })
       .then(() => {
