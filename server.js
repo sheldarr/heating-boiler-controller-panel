@@ -30,9 +30,9 @@ const LISTEN_ON_ALL_INTERFACES = '0.0.0.0';
 new CronJob(
   process.env.CRON,
   async () => {
-    logger.info(`REQUEST: ${process.env.CONTROLLER_URL}`);
+    logger.info(`REQUEST: ${process.env.CONTROLLER_STATUS_API_URL}`);
 
-    const { data } = await axios.get(process.env.CONTROLLER_URL);
+    const { data } = await axios.get(process.env.CONTROLLER_STATUS_API_URL);
 
     const {
       inputTemperature,

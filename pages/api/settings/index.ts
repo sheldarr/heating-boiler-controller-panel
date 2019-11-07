@@ -12,10 +12,10 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const settings = `${setpoint} ${hysteresis} ${power} ${mode}`;
-    console.log(`REQUEST ${process.env.CONTROLLER_URL} ${settings}`);
+    console.log(`REQUEST ${process.env.CONTROLLER_STATUS_API_URL} ${settings}`);
 
     axios
-      .post(process.env.CONTROLLER_URL, settings)
+      .post(process.env.CONTROLLER_STATUS_API_URL, settings)
       .then(({ data }) => {
         console.log(`RESPONSE: ${JSON.stringify(data)}`);
 

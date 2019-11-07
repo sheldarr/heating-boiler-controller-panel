@@ -231,13 +231,9 @@ const Home = ({
 };
 
 Home.getInitialProps = async () => {
-  const baseUrl = process.browser
-    ? `/api`
-    : `${process.env.PROTOCOL}://${process.env.HOSTNAME}/api`;
-
   const {
     data: { fanOn, inputTemperature, lastSync, outputTemperature, setpoint },
-  } = await axios.get(`${baseUrl}/controller/status`);
+  } = await axios.get(process.env.CONTROLLER_STATUS_API_URL);
 
   return {
     initialFanOn: fanOn,
