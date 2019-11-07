@@ -200,13 +200,13 @@ const Home = ({
                   value={mode}
                 >
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
-                    Stale wyłączony
+                    OFF
                   </ToggleButton>
                   <ToggleButton key={2} value="NORMAL">
-                    Termostat
+                    TERMOSTAT
                   </ToggleButton>
                   <ToggleButton key={3} value="FORCED_FAN_ON">
-                    Stale włączony
+                    ON
                   </ToggleButton>
                 </ToggleButtonGroup>
               </ToggleButtonsContainer>
