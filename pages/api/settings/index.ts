@@ -12,17 +12,18 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const settings = `${setpoint} ${hysteresis} ${power} ${mode}`;
-    console.log(`Saving settings to controller ${settings}`);
+    console.log(`REQUEST ${process.env.CONTROLLER_URL} ${settings}`);
 
     axios
       .post(process.env.CONTROLLER_URL, settings)
       .then(({ data }) => {
-        console.log(`Response: ${JSON.stringify(data)}`);
+        console.log(`RESPONSE: ${JSON.stringify(data)}`);
 
         return res.status(200).send('OK');
       })
       .catch((error) => {
-        console.error(error);
+        console.log(`ERROR RESPONSE: ${error}`);
+
         return res.status(500).send('ERROR');
       });
   }
