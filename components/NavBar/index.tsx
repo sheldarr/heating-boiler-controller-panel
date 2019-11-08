@@ -8,21 +8,26 @@ import { pl } from 'date-fns/locale';
 import { useInterval } from 'react-use';
 import { Detector } from 'react-detect-offline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWifi } from '@fortawesome/free-solid-svg-icons';
+import { faFan, faWifi } from '@fortawesome/free-solid-svg-icons';
 
-const HeaderContainer = styled.div`
+const LastSync = styled.div`
+  text-align: center;
+`;
+
+const ContainerWithMargin = styled.div`
   margin-right: 1rem;
 `;
 
-const DetectorContainer = styled.div`
+const Space = styled.div`
   flex-grow: 1;
 `;
 
 interface Props {
+  fanOn: boolean;
   lastSync: Date;
 }
 
-const NavBar = ({ lastSync }: Props) => {
+const NavBar = ({ fanOn, lastSync }: Props) => {
   const [relativeDistance, setRelativeDistance] = useState(new Date());
 
   useInterval(() => {
@@ -32,28 +37,40 @@ const NavBar = ({ lastSync }: Props) => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <HeaderContainer>
+        <ContainerWithMargin>
           <Typography variant="h6">Piec</Typography>
-        </HeaderContainer>
-        <DetectorContainer>
+        </ContainerWithMargin>
+        <ContainerWithMargin>
           <Detector
             render={({ online }) => (
               <FontAwesomeIcon
-                color={online ? 'green' : 'red'}
+                color={online ? 'white' : 'red'}
                 icon={faWifi}
-                size="lg"
+                size="2x"
               />
             )}
           />
-        </DetectorContainer>
-        <span>
-          {format(lastSync, 'HH:mm:ss')} (
-          {formatDistance(lastSync, relativeDistance, {
-            includeSeconds: true,
-            locale: pl,
-          })}{' '}
-          temu)
-        </span>
+        </ContainerWithMargin>
+        <ContainerWithMargin>
+          <FontAwesomeIcon
+            color={fanOn ? 'white' : 'red'}
+            icon={faFan}
+            size="2x"
+            spin={fanOn}
+          />
+        </ContainerWithMargin>
+        <Space />
+        <div>
+          <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
+          <div>
+            (
+            {formatDistance(lastSync, relativeDistance, {
+              includeSeconds: true,
+              locale: pl,
+            })}{' '}
+            temu)
+          </div>
+        </div>
       </Toolbar>
     </AppBar>
   );

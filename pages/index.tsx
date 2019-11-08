@@ -153,7 +153,7 @@ const Home = ({
         <title>Piec</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
-      <NavBar lastSync={lastSync} />
+      <NavBar fanOn={fanOn} lastSync={lastSync} />
       <Container>
         <StyledPaper>
           <Grid container>
