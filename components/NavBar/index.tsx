@@ -6,8 +6,15 @@ import styled from 'styled-components';
 import { format, formatDistance } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useInterval } from 'react-use';
+import { Detector } from 'react-detect-offline';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWifi } from '@fortawesome/free-solid-svg-icons';
 
-const StyledHeader = styled(Typography)`
+const HeaderContainer = styled.div`
+  margin-right: 1rem;
+`;
+
+const DetectorContainer = styled.div`
   flex-grow: 1;
 `;
 
@@ -25,7 +32,20 @@ const NavBar = ({ lastSync }: Props) => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <StyledHeader variant="h6">Piec</StyledHeader>
+        <HeaderContainer>
+          <Typography variant="h6">Piec</Typography>
+        </HeaderContainer>
+        <DetectorContainer>
+          <Detector
+            render={({ online }) => (
+              <FontAwesomeIcon
+                color={online ? 'green' : 'red'}
+                icon={faWifi}
+                size="lg"
+              />
+            )}
+          />
+        </DetectorContainer>
         <span>
           {format(lastSync, 'HH:mm:ss')} (
           {formatDistance(lastSync, relativeDistance, {
