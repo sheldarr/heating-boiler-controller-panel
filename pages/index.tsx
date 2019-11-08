@@ -87,7 +87,7 @@ const Home = ({
         lastSync,
         mode,
         outputTemperature,
-        setpoint,
+        setpoint: newSetpoint,
       } = JSON.parse(event.data);
 
       setFanOn(fanOn);
@@ -96,6 +96,11 @@ const Home = ({
       setMode(mode);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
+
+      if (newSetpoint !== setpoint) {
+        setSetpoint(newSetpoint);
+        setDraftSetpoint(newSetpoint);
+      }
     };
   }, []);
 
@@ -107,7 +112,6 @@ const Home = ({
         setpoint: newSetpoint,
       })
       .then(() => {
-        setDraftSetpoint(newSetpoint);
         enqueueSnackbar(`Ustawiono termostat na ${newSetpoint}°C`, {
           variant: 'success',
         });
