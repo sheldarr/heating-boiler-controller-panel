@@ -13,6 +13,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 import NavBar from '../components/NavBar';
+import websocketClient from '../websocketClient';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -74,13 +75,7 @@ const Home = ({
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
-    const websocket = new WebSocket(
-      `${location.protocol === 'https:' ? 'wss' : 'ws'}://${
-        location.host
-      }/websocket`
-    );
-
-    websocket.onmessage = (event) => {
+    websocketClient.onmessage = (event) => {
       const {
         fanOn,
         inputTemperature,
