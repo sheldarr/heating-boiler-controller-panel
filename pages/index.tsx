@@ -7,8 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import styled from 'styled-components';
 import blue from '@material-ui/core/colors/blue';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFan } from '@fortawesome/free-solid-svg-icons';
 import Grid from '@material-ui/core/Grid';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -24,11 +22,6 @@ const StyledPaper = styled(Paper)`
 
 const OutputTemperature = styled(Typography)`
   color: ${blue[500]};
-`;
-
-const FanContainer = styled.div`
-  margin-top: 2rem;
-  text-align: center;
 `;
 
 const ToggleButtonsContainer = styled.div`
