@@ -225,16 +225,6 @@ const Home = ({
                 </SliderContainer>
               </Grid>
             )}
-            <Grid item xs={12}>
-              <FanContainer>
-                <FontAwesomeIcon
-                  color={fanOn ? 'green' : 'red'}
-                  icon={faFan}
-                  size="4x"
-                  spin={fanOn}
-                />
-              </FanContainer>
-            </Grid>
           </Grid>
         </StyledPaper>
       </Container>
