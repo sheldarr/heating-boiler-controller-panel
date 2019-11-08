@@ -1,4 +1,3 @@
-/* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const low = require('lowdb');
@@ -21,7 +20,7 @@ const getStatus = () => {
   const fanOn = db.get('settings.fanOn').value();
   const hysteresis = db.get('settings.hysteresis').value();
   const inputTemperature = db.get('temperature.input').value();
-  const lastSync = db.get('temperature.input').value();
+  const lastSync = db.get('status.lastSync').value();
   const mode = db.get('settings.mode').value();
   const outputTemperature = db.get('temperature.output').value();
   const setpoint = db.get('settings.setpoint').value();
