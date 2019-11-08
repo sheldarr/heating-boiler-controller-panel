@@ -47,6 +47,12 @@ const modeLabelMap = {
   THERMOSTAT: 'TERMOSTAT',
 };
 
+const labelModeMap = {
+  FORCED_FAN_OFF: 'FORCED_FAN_OFF',
+  FORCED_FAN_ON: 'FORCED_FAN_ON',
+  NORMAL: 'THERMOSTAT',
+};
+
 const Home = ({
   enqueueSnackbar,
   initialFanOn,
@@ -167,7 +173,7 @@ const Home = ({
                   onChange={(event, value) => {
                     updateMode(value);
                   }}
-                  value={mode}
+                  value={labelModeMap[mode]}
                 >
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
                     OFF
