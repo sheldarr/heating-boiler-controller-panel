@@ -95,7 +95,7 @@ const Home = ({
 
   const updateSetpoint = async (newSetpoint) => {
     axios
-      .post('/api/settings', {
+      .post('/api/controller/settings', {
         hysteresis: 2.0,
         mode,
         setpoint: newSetpoint,
@@ -119,7 +119,7 @@ const Home = ({
 
   const updateMode = async (newMode) => {
     axios
-      .post('/api/settings', {
+      .post('/api/controller/settings', {
         hysteresis: 2.0,
         mode: newMode === 'THERMOSTAT' ? 'NORMAL' : newMode,
         setpoint,
