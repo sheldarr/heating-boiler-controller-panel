@@ -38,6 +38,7 @@ interface Props extends WithSnackbarProps {
   initialFanOn: boolean;
   initialInputTemperature: number;
   initialLastSync: string;
+  initialMode: string;
   initialOutputTemperature: number;
   initialSetpoint: number;
 }
@@ -59,6 +60,7 @@ const Home = ({
   initialFanOn,
   initialInputTemperature,
   initialLastSync,
+  initialMode,
   initialOutputTemperature,
   initialSetpoint,
 }: Props) => {
@@ -71,7 +73,7 @@ const Home = ({
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
-  const [mode, setMode] = useState('NORMAL');
+  const [mode, setMode] = useState(initialMode);
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
@@ -232,13 +234,21 @@ const Home = ({
 
 Home.getInitialProps = async () => {
   const {
-    data: { fanOn, inputTemperature, lastSync, outputTemperature, setpoint },
+    data: {
+      fanOn,
+      inputTemperature,
+      lastSync,
+      mode,
+      outputTemperature,
+      setpoint,
+    },
   } = await axios.get(`${process.env.APP_API_URL}/controller/status`);
 
   return {
     initialFanOn: fanOn,
     initialInputTemperature: inputTemperature,
     initialLastSync: lastSync,
+    initialMode: mode,
     initialOutputTemperature: outputTemperature,
     initialSetpoint: setpoint,
   };
