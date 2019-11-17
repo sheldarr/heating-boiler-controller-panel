@@ -18,6 +18,7 @@ import websocketClient from '../websocketClient';
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
   margin-top: 2rem;
+  min-height: calc(100vh - 4rem - 5rem);
   padding: 2rem;
 `;
 
