@@ -273,12 +273,14 @@ const Home = ({
                     <Legend />
                     <Line
                       dataKey="outputTemperature"
+                      dot={false}
                       name="Temperatura wyjściowa"
                       stroke="#f44336"
                       type="monotone"
                     />
                     <Line
                       dataKey="inputTemperature"
+                      dot={false}
                       name="Temperatura wejściowa"
                       stroke="#2196f3"
                       type="monotone"
