@@ -18,7 +18,6 @@ import {
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   Legend,
 } from 'recharts';
 import { format } from 'date-fns';
