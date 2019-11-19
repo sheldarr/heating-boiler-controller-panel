@@ -93,7 +93,7 @@ const Home = ({
   const [outputTemperature, setOutputTemperature] = useState(
     initialOutputTemperature
   );
-  const [measurements, setMeasurements] = useState(
+  const [measurements] = useState(
     initialMeasurements.map((measurement) => ({
       ...measurement,
       time: format(new Date(measurement.time), 'HH:mm:ss'),
@@ -119,14 +119,6 @@ const Home = ({
       setFanOn(fanOn);
       setInputTemperature(inputTemperature);
       setLastSync(new Date(lastSync));
-      setMeasurements([
-        ...measurements,
-        {
-          inputTemperature,
-          outputTemperature,
-          time: format(new Date(), 'HH:mm:ss'),
-        },
-      ]);
       setMode(mode);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
