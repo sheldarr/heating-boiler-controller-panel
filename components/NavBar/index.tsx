@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { format, formatDistance } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useInterval } from 'react-use';
-import { Detector } from 'react-detect-offline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan, faWifi } from '@fortawesome/free-solid-svg-icons';
 
@@ -41,19 +40,8 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
           <Typography variant="h6">Piec</Typography>
         </ContainerWithMargin>
         <ContainerWithMargin>
-          <Detector
-            render={({ online }) => (
-              <FontAwesomeIcon
-                color={online ? 'white' : 'red'}
-                icon={faWifi}
-                size="2x"
-              />
-            )}
-          />
-        </ContainerWithMargin>
-        <ContainerWithMargin>
           <FontAwesomeIcon
-            color={fanOn ? 'white' : 'red'}
+            color={'white'}
             icon={faFan}
             size="2x"
             spin={fanOn}
