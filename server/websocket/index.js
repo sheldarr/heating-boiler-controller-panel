@@ -3,7 +3,7 @@
 const axios = require('axios');
 const WebSocket = require('ws');
 
-const { setStatus } = require('../db');
+const { getStatus, setStatus } = require('../db');
 
 const webSocketServer = new WebSocket.Server({ noServer: true });
 
@@ -39,7 +39,9 @@ const broadcastControllerStatus = async () => {
     lastSync
   );
 
-  broadcast({ ...data, lastSync });
+  const status = getStatus();
+
+  broadcast(status);
 };
 
 module.exports = {
