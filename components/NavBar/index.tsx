@@ -7,7 +7,7 @@ import { format, formatDistance } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useInterval } from 'react-use';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFan, faWifi } from '@fortawesome/free-solid-svg-icons';
+import { faFan } from '@fortawesome/free-solid-svg-icons';
 
 const LastSync = styled.div`
   text-align: center;
