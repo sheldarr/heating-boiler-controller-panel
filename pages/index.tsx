@@ -271,18 +271,17 @@ const Home = ({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis />
-                    <Tooltip />
                     <Legend />
-                    <Line
-                      dataKey="inputTemperature"
-                      name="Temperatura wejściowa"
-                      stroke="#2196f3"
-                      type="monotone"
-                    />
                     <Line
                       dataKey="outputTemperature"
                       name="Temperatura wyjściowa"
                       stroke="#f44336"
+                      type="monotone"
+                    />
+                    <Line
+                      dataKey="inputTemperature"
+                      name="Temperatura wejściowa"
+                      stroke="#2196f3"
                       type="monotone"
                     />
                   </LineChart>
