@@ -18,7 +18,6 @@ import {
   YAxis,
   CartesianGrid,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import { format } from 'date-fns';
 
@@ -37,7 +36,7 @@ const OutputTemperature = styled(Typography)`
 `;
 
 const ChartContainer = styled.div`
-  height: 12rem;
+  height: 15rem;
   margin-top: 4rem;
 `;
 
@@ -266,11 +265,10 @@ const Home = ({
             <Grid item xs={12}>
               <ChartContainer>
                 <ResponsiveContainer>
-                  <LineChart data={measurements}>
+                  <LineChart data={measurements} margin={{ left: -45 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis />
-                    <Legend />
                     <Line
                       dataKey="outputTemperature"
                       dot={false}
