@@ -2,11 +2,10 @@
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
+const differenceInSeconds = require('date-fns/differenceInSeconds');
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
-
-const MAX_AMOUNT_OF_MEASUREMENTS = 120;
 
 db.defaults({
   'settings.fanOn': false,
@@ -60,17 +59,26 @@ const setStatus = (
 
   const measurements = db.get('temperature.measurements').value();
 
-  if (measurements.length >= MAX_AMOUNT_OF_MEASUREMENTS) {
-    measurements.shift();
+  const lastMeasurementDate =
+    measurements.length && new Date(measurements[measurements.length - 1].time);
+
+  if (
+    differenceInSeconds(new Date(), lastMeasurementDate) >=
+      process.env.MEASUREMENTS_SKIP_SECONDS ||
+    measurements.length === 0
+  ) {
+    if (measurements.length >= process.env.MAX_AMOUNT_OF_MEASUREMENTS) {
+      measurements.shift();
+    }
+
+    measurements.push({
+      inputTemperature,
+      outputTemperature,
+      time: lastSync,
+    });
+
+    db.set('temperature.measurements', measurements).write();
   }
-
-  measurements.push({
-    inputTemperature,
-    outputTemperature,
-    time: lastSync,
-  });
-
-  db.set('temperature.measurements', measurements).write();
 };
 
 module.exports = {
