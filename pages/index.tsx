@@ -11,6 +11,17 @@ import Grid from '@material-ui/core/Grid';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts';
+import { format } from 'date-fns';
 
 import NavBar from '../components/NavBar';
 import websocketClient from '../websocketClient';
@@ -26,6 +37,11 @@ const OutputTemperature = styled(Typography)`
   color: ${blue[500]};
 `;
 
+const ChartContainer = styled.div`
+  height: 12rem;
+  margin-top: 4rem;
+`;
+
 const ToggleButtonsContainer = styled.div`
   margin-top: 2rem;
   text-align: center;
@@ -35,10 +51,17 @@ const SliderContainer = styled.div`
   margin-top: 4rem;
 `;
 
+interface Measurement {
+  inputTemperature: number;
+  outputTemperature: number;
+  time: string;
+}
+
 interface Props extends WithSnackbarProps {
   initialFanOn: boolean;
   initialInputTemperature: number;
   initialLastSync: string;
+  initialMeasurements: Measurement[];
   initialMode: string;
   initialOutputTemperature: number;
   initialSetpoint: number;
@@ -60,6 +83,7 @@ const Home = ({
   enqueueSnackbar,
   initialFanOn,
   initialInputTemperature,
+  initialMeasurements,
   initialLastSync,
   initialMode,
   initialOutputTemperature,
@@ -70,6 +94,12 @@ const Home = ({
   );
   const [outputTemperature, setOutputTemperature] = useState(
     initialOutputTemperature
+  );
+  const [measurements, setMeasurements] = useState(
+    initialMeasurements.map((measurement) => ({
+      ...measurement,
+      time: format(new Date(measurement.time), 'HH:mm:ss'),
+    }))
   );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
@@ -91,6 +121,14 @@ const Home = ({
       setFanOn(fanOn);
       setInputTemperature(inputTemperature);
       setLastSync(new Date(lastSync));
+      setMeasurements([
+        ...measurements,
+        {
+          inputTemperature,
+          outputTemperature,
+          time: format(new Date(), 'HH:mm:ss'),
+        },
+      ]);
       setMode(mode);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
@@ -226,6 +264,31 @@ const Home = ({
                 </SliderContainer>
               </Grid>
             )}
+            <Grid item xs={12}>
+              <ChartContainer>
+                <ResponsiveContainer>
+                  <LineChart data={measurements}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      dataKey="inputTemperature"
+                      name="Temperatura wejściowa"
+                      stroke="#2196f3"
+                      type="monotone"
+                    />
+                    <Line
+                      dataKey="outputTemperature"
+                      name="Temperatura wyjściowa"
+                      stroke="#f44336"
+                      type="monotone"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </Grid>
           </Grid>
         </StyledPaper>
       </Container>
@@ -238,6 +301,7 @@ Home.getInitialProps = async () => {
     data: {
       fanOn,
       inputTemperature,
+      measurements,
       lastSync,
       mode,
       outputTemperature,
@@ -249,6 +313,7 @@ Home.getInitialProps = async () => {
     initialFanOn: fanOn,
     initialInputTemperature: inputTemperature,
     initialLastSync: lastSync,
+    initialMeasurements: measurements,
     initialMode: mode,
     initialOutputTemperature: outputTemperature,
     initialSetpoint: setpoint,
