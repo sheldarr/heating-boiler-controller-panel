@@ -257,7 +257,7 @@ const Home = ({
             <Grid item xs={12}>
               <ChartContainer>
                 <ResponsiveContainer>
-                  <LineChart data={measurements} margin={{ left: -45 }}>
+                  <LineChart data={measurements}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis />
