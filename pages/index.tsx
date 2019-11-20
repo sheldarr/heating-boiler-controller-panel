@@ -37,8 +37,8 @@ const OutputTemperature = styled(Typography)`
 `;
 
 const ChartContainer = styled.div`
-  height: 15rem;
-  margin-top: 4rem;
+  height: 13rem;
+  margin-top: 3rem;
 `;
 
 const ToggleButtonsContainer = styled.div`
@@ -261,7 +261,7 @@ const Home = ({
                   <LineChart data={measurements}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
-                    <YAxis />
+                    <YAxis width={20} />
                     <Tooltip />
                     <Line
                       dataKey="outputTemperature"
