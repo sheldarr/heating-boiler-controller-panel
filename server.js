@@ -30,8 +30,25 @@ initializeAxios();
 const handleByExpress = express();
 
 handleByExpress.use(bodyParser.json());
+handleByExpress.use((req, res, next) => {
+  const parsedUrl = url.parse(req.url, true);
+  const { pathname } = parsedUrl;
 
-new CronJob(process.env.CRON, broadcastControllerStatus, null, true);
+  if (pathname.startsWith('/api')) {
+    logger.info(
+      `INTERNAL REQUEST: ${String(req.method).toUpperCase()} ${
+        req.url
+      } ${JSON.stringify(req.body)} ${JSON.stringify(req.headers)}`
+    );
+  }
+
+  next();
+});
+
+const broadcastStatusCronJob = new CronJob(
+  process.env.CRON,
+  broadcastControllerStatus
+);
 
 app.prepare().then(() => {
   createServer((req, res) => {
@@ -54,7 +71,6 @@ app.prepare().then(() => {
     handleByNext(req, res);
   })
     .on('upgrade', (request, socket, head) => {
-      logger.info(head);
       const pathname = url.parse(request.url).pathname;
 
       if (pathname === '/websocket') {
@@ -67,8 +83,14 @@ app.prepare().then(() => {
     })
     .listen(APP_PORT, LISTEN_ON_ALL_INTERFACES, (err) => {
       if (err) {
+        logger.error(err);
         throw err;
       }
+
+      broadcastStatusCronJob.start();
+      logger.info(
+        `> Broadcast controller status cron job started (${process.env.CRON})`
+      );
 
       logger.info(
         `> Ready on http://${LISTEN_ON_ALL_INTERFACES}:${APP_PORT} ${process.env.NODE_ENV}`

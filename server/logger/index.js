@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 const { createLogger, format, transports } = require('winston');
-const { colorize, combine, timestamp, simple } = format;
+const { cli, combine, timestamp } = format;
+
+const commonFormat = combine(cli(), timestamp());
 
 const logger = createLogger({
-  format: combine(colorize(), timestamp(), simple()),
-  transports: [new transports.Console()],
+  format: commonFormat,
+  transports: [
+    new transports.Console({ level: 'error' }),
+    new transports.File({ filename: 'logs/error.log', level: 'error' }),
+    new transports.File({ filename: 'logs/warn.log', level: 'warn' }),
+    new transports.File({ filename: 'logs/info.log', level: 'info' }),
+  ],
 });
 
 module.exports = logger;

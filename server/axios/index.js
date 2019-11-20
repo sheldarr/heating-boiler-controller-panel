@@ -7,9 +7,9 @@ const logger = require('../logger');
 function initializeAxios() {
   axios.interceptors.request.use((config) => {
     logger.info(
-      `REQUEST: ${String(config.method).toUpperCase()} ${
+      `EXTERNAL REQUEST: ${String(config.method).toUpperCase()} ${
         config.url
-      } ${JSON.stringify(config.data)} ${JSON.stringify(config.headers)}`
+      } ${JSON.stringify(config.data || {})} ${JSON.stringify(config.headers)}`
     );
 
     return config;
@@ -17,7 +17,7 @@ function initializeAxios() {
   axios.interceptors.response.use(
     (response) => {
       logger.info(
-        `RESPONSE: ${response.status} ${String(
+        `EXTERNAL RESPONSE: ${response.status} ${String(
           response.config.method
         ).toUpperCase()} ${response.config.url} ${JSON.stringify(
           response.data
@@ -29,7 +29,7 @@ function initializeAxios() {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error) => {
       logger.error(
-        `ERROR RESPONSE: ${error.response.status} ${String(
+        `ERROR EXTERNAL RESPONSE: ${error.response.status} ${String(
           error.response.config.method
         ).toUpperCase()}  ${error.response.config.url} ${
           error.message
