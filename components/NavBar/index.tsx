@@ -49,7 +49,7 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
             spin={fanOn}
           />
         </ContainerWithMargin>
-        <div>{websocketClient.readyState}</div>
+        <div>{websocketClient && websocketClient.readyState}</div>
         <Space />
         <div>
           <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
