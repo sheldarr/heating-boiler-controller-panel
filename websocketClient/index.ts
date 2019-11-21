@@ -1,5 +1,13 @@
 let ws;
 
+let retries = 0;
+
+const callbacksFns = [];
+
+export const registerCallback = (callback) => {
+  callbacksFns.push(callback);
+};
+
 const connect = () => {
   ws = new WebSocket(
     `${location.protocol === 'https:' ? 'wss' : 'ws'}://${
@@ -8,14 +16,21 @@ const connect = () => {
   );
 
   ws.onopen = function() {
+    retries = 0;
     console.log('Socket is open.');
+  };
+
+  ws.onmessage = (event) => {
+    callbacksFns.forEach((callback) => callback(event));
   };
 
   ws.onclose = function(e) {
     console.log(
-      'Socket is closed. Reconnect will be attempted in 1 second.',
+      'Socket is closed. Reconnect will be attempted in 5 seconds.',
       e.reason
     );
+
+    retries += 1;
 
     setTimeout(function() {
       connect();
@@ -34,3 +49,4 @@ if (typeof window !== 'undefined') {
 }
 
 export default ws;
+export { retries };

@@ -9,7 +9,7 @@ import { useInterval } from 'react-use';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan } from '@fortawesome/free-solid-svg-icons';
 
-import websocketClient from '../../websocketClient';
+import websocketClient, { retries } from '../../websocketClient';
 
 const LastSync = styled.div`
   text-align: center;
@@ -50,6 +50,8 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
           />
         </ContainerWithMargin>
         <div>{websocketClient && websocketClient.readyState}</div>
+        <div> - </div>
+        <div>{retries}</div>
         <Space />
         <div>
           <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>

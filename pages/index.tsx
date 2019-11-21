@@ -23,7 +23,7 @@ import {
 import { format } from 'date-fns';
 
 import NavBar from '../components/NavBar';
-import websocketClient from '../websocketClient';
+import { registerCallback } from '../websocketClient';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -38,7 +38,7 @@ const OutputTemperature = styled(Typography)`
 
 const ChartContainer = styled.div`
   height: 12rem;
-  margin-top: 2rem;
+  margin-top: 4rem;
 `;
 
 const ToggleButtonsContainer = styled.div`
@@ -107,7 +107,7 @@ const Home = ({
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
-    websocketClient.onmessage = (event) => {
+    registerCallback((event) => {
       const {
         fanOn,
         inputTemperature,
@@ -118,7 +118,7 @@ const Home = ({
       } = JSON.parse(event.data);
 
       setFanOn(fanOn);
-      setInputTemperature(inputTemperature);
+      setInputTemperature(inputTemperature + 1);
       setLastSync(new Date(lastSync));
       setMode(mode);
       setOutputTemperature(outputTemperature);
@@ -128,7 +128,7 @@ const Home = ({
         setSetpoint(newSetpoint);
         setDraftSetpoint(newSetpoint);
       }
-    };
+    });
   }, []);
 
   const updateSetpoint = async (newSetpoint) => {
