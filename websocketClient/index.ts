@@ -1,7 +1,5 @@
 let ws;
 
-let retries = 0;
-
 const callbacksFns = [];
 
 export const registerCallback = (callback) => {
@@ -16,7 +14,6 @@ const connect = () => {
   );
 
   ws.onopen = function() {
-    retries = 0;
     console.log('Socket is open.');
   };
 
@@ -29,8 +26,6 @@ const connect = () => {
       'Socket is closed. Reconnect will be attempted in 5 seconds.',
       e.reason
     );
-
-    retries += 1;
 
     setTimeout(function() {
       connect();
@@ -49,4 +44,3 @@ if (typeof window !== 'undefined') {
 }
 
 export default ws;
-export { retries };
