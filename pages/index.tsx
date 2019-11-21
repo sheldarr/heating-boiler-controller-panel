@@ -37,17 +37,17 @@ const OutputTemperature = styled(Typography)`
 `;
 
 const ChartContainer = styled.div`
-  height: 13rem;
-  margin-top: 3rem;
+  height: 12rem;
+  margin-top: 2rem;
 `;
 
 const ToggleButtonsContainer = styled.div`
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: center;
 `;
 
 const SliderContainer = styled.div`
-  margin-top: 4rem;
+  margin-top: 3rem;
 `;
 
 interface Measurement {

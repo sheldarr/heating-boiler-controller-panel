@@ -9,6 +9,8 @@ import { useInterval } from 'react-use';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFan } from '@fortawesome/free-solid-svg-icons';
 
+import websocketClient from '../../websocketClient';
+
 const LastSync = styled.div`
   text-align: center;
 `;
@@ -47,6 +49,7 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
             spin={fanOn}
           />
         </ContainerWithMargin>
+        <div>{websocketClient.readyState}</div>
         <Space />
         <div>
           <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>

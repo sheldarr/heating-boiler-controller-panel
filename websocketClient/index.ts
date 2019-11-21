@@ -19,7 +19,7 @@ const connect = () => {
 
     setTimeout(function() {
       connect();
-    }, 1000);
+    }, 5000);
   };
 
   ws.onerror = function(err) {
