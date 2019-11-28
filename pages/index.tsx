@@ -261,7 +261,7 @@ const Home = ({
                   <LineChart data={measurements}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
-                    <YAxis width={20} />
+                    <YAxis minTickGap={10} width={20} />
                     <Tooltip />
                     <Line
                       dataKey="outputTemperature"
