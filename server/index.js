@@ -8,17 +8,17 @@ const CronJob = require('cron').CronJob;
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const logger = require('./server/logger');
-const initializeAxios = require('./server/axios');
+const logger = require('./logger');
+const initializeAxios = require('./axios');
 const {
   broadcastControllerStatus,
   broadcastMeasurements,
   webSocketServer,
-} = require('./server/websocket');
+} = require('./websocket');
 
-const apiControllerMeasurements = require('./server/api/controller/measurements');
-const apiControllerStatus = require('./server/api/controller/status');
-const apiControllerSettings = require('./server/api/controller/settings');
+const apiControllerMeasurements = require('./api/controller/measurements');
+const apiControllerStatus = require('./api/controller/status');
+const apiControllerSettings = require('./api/controller/settings');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
