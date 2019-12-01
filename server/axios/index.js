@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const axios = require('axios');
 
 const logger = require('../logger');

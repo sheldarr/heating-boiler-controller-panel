@@ -21,7 +21,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { format } from 'date-fns';
-import { useInterval } from 'react-use';
 
 import NavBar from '../components/NavBar';
 import { registerCallback } from '../websocketClient';
@@ -101,12 +100,6 @@ const Home = ({
       time: format(new Date(measurement.time), 'HH:mm:ss'),
     }))
   );
-  const [draftMeasurements, setDraftMeasuremenets] = useState(
-    initialMeasurements.map((measurement) => ({
-      ...measurement,
-      time: format(new Date(measurement.time), 'HH:mm:ss'),
-    }))
-  );
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
@@ -116,44 +109,39 @@ const Home = ({
   useEffect(() => {
     registerCallback((event) => {
       const {
+        eventName,
         fanOn,
         inputTemperature,
         lastSync,
+        measurements,
         mode,
         outputTemperature,
         setpoint: newSetpoint,
       } = JSON.parse(event.data);
 
-      setFanOn(fanOn);
-      setInputTemperature(inputTemperature + 1);
-      setLastSync(new Date(lastSync));
-      setMode(mode);
-      setOutputTemperature(outputTemperature);
-      setSetpoint(setpoint);
+      if (eventName === 'status') {
+        setFanOn(fanOn);
+        setInputTemperature(inputTemperature + 1);
+        setLastSync(new Date(lastSync));
+        setMode(mode);
+        setOutputTemperature(outputTemperature);
+        setSetpoint(setpoint);
 
-      setDraftMeasuremenets((freshDraftMeasurements) => {
-        const [, ...restMeasurements] = freshDraftMeasurements;
-
-        return [
-          ...restMeasurements,
-          {
-            inputTemperature,
-            outputTemperature,
-            time: format(new Date(), 'HH:mm:ss'),
-          },
-        ];
-      });
-
-      if (newSetpoint !== setpoint) {
-        setSetpoint(newSetpoint);
-        setDraftSetpoint(newSetpoint);
+        if (newSetpoint !== setpoint) {
+          setSetpoint(newSetpoint);
+          setDraftSetpoint(newSetpoint);
+        }
+      }
+      if (eventName === 'measurements') {
+        setMeasuremenets(
+          measurements.map((measurement) => ({
+            ...measurement,
+            time: format(new Date(measurement.time), 'HH:mm:ss'),
+          }))
+        );
       }
     });
   }, []);
-
-  useInterval(() => {
-    setMeasuremenets([...draftMeasurements]);
-  }, Number(process.env.REFRESH_CHART_DELAY_MILLISECONDS));
 
   const updateSetpoint = async (newSetpoint) => {
     axios
@@ -317,13 +305,15 @@ Home.getInitialProps = async () => {
     data: {
       fanOn,
       inputTemperature,
-      measurements,
       lastSync,
       mode,
       outputTemperature,
       setpoint,
     },
   } = await axios.get(`${process.env.APP_API_URL}/controller/status`);
+  const { data: measurements } = await axios.get(
+    `${process.env.APP_API_URL}/controller/measurements`
+  );
 
   return {
     initialFanOn: fanOn,

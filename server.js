@@ -12,9 +12,11 @@ const logger = require('./server/logger');
 const initializeAxios = require('./server/axios');
 const {
   broadcastControllerStatus,
+  broadcastMeasurements,
   webSocketServer,
 } = require('./server/websocket');
 
+const apiControllerMeasurements = require('./server/api/controller/measurements');
 const apiControllerStatus = require('./server/api/controller/status');
 const apiControllerSettings = require('./server/api/controller/settings');
 
@@ -45,9 +47,14 @@ handleByExpress.use((req, res, next) => {
   next();
 });
 
-const broadcastStatusCronJob = new CronJob(
-  process.env.CRON,
+const broadcastControllerStatusCronJob = new CronJob(
+  process.env.STATUS_CRON,
   broadcastControllerStatus
+);
+
+const broadcastMeasurementsCronJob = new CronJob(
+  process.env.MEASUREMENTS_CRON,
+  broadcastMeasurements
 );
 
 app.prepare().then(() => {
@@ -56,6 +63,10 @@ app.prepare().then(() => {
     const { pathname } = parsedUrl;
 
     if (pathname.startsWith('/api')) {
+      handleByExpress.get(
+        '/api/controller/measurements',
+        apiControllerMeasurements
+      );
       handleByExpress.get('/api/controller/status', apiControllerStatus);
       handleByExpress.post('/api/controller/settings', apiControllerSettings);
 
@@ -87,9 +98,14 @@ app.prepare().then(() => {
         throw err;
       }
 
-      broadcastStatusCronJob.start();
+      broadcastControllerStatusCronJob.start();
       logger.info(
-        `> Broadcast controller status cron job started (${process.env.CRON})`
+        `> Broadcast controller status cron job started (${process.env.STATUS_CRON})`
+      );
+
+      broadcastMeasurementsCronJob.start();
+      logger.info(
+        `> Broadcast measurements cron job started (${process.env.MEASUREMENTS_CRON})`
       );
 
       logger.info(

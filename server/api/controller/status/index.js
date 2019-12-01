@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-const db = require('../../../db');
+const { getStatus } = require('../../../db');
 
 module.exports = (req, res) => {
-  const status = db.getStatus();
+  const status = getStatus();
 
   return res.send(status);
 };

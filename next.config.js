@@ -7,8 +7,6 @@ module.exports = withOffline(
   withCSS({
     env: {
       APP_API_URL: process.env.APP_API_URL,
-      REFRESH_CHART_DELAY_MILLISECONDS:
-        process.env.REFRESH_CHART_DELAY_MILLISECONDS,
     },
     webpack: (config) => {
       // Fixes npm packages that depend on `fs` module

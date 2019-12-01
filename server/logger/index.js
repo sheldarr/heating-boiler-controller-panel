@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const formatDate = require('date-fns/format');
 const { createLogger, format, transports } = require('winston');
 const { cli, combine } = format;

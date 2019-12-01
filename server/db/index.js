@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const differenceInSeconds = require('date-fns/differenceInSeconds');
@@ -26,18 +24,20 @@ const getStatus = () => {
   const mode = db.get('settings.mode').value();
   const outputTemperature = db.get('temperature.output').value();
   const setpoint = db.get('settings.setpoint').value();
-  const measurements = db.get('temperature.measurements').value();
 
   return {
     fanOn,
     hysteresis,
     inputTemperature,
     lastSync,
-    measurements,
     mode,
     outputTemperature,
     setpoint,
   };
+};
+
+const getMeasurements = () => {
+  return db.get('temperature.measurements').value();
 };
 
 const setStatus = (
@@ -82,6 +82,7 @@ const setStatus = (
 };
 
 module.exports = {
+  getMeasurements,
   getStatus,
   setStatus,
 };

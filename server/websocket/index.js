@@ -1,16 +1,19 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const axios = require('axios');
 const WebSocket = require('ws');
 
-const { getStatus, setStatus } = require('../db');
+const { getMeasurements, getStatus, setStatus } = require('../db');
 
 const webSocketServer = new WebSocket.Server({ noServer: true });
 
-const broadcast = (message) => {
+const broadcast = (eventName, message) => {
   webSocketServer.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(message));
+      client.send(
+        JSON.stringify({
+          eventName,
+          ...message,
+        })
+      );
     }
   });
 };
@@ -41,11 +44,18 @@ const broadcastControllerStatus = async () => {
 
   const status = getStatus();
 
-  broadcast(status);
+  broadcast('status', status);
+};
+
+const broadcastMeasurements = async () => {
+  const measurements = getMeasurements();
+
+  broadcast('measurements', { measurements });
 };
 
 module.exports = {
   broadcast,
   broadcastControllerStatus,
+  broadcastMeasurements,
   webSocketServer,
 };
