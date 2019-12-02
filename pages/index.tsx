@@ -94,7 +94,7 @@ const Home = ({
   const [outputTemperature, setOutputTemperature] = useState(
     initialOutputTemperature
   );
-  const [measurements] = useState(
+  const [measurements, setMeasuremenets] = useState(
     initialMeasurements.map((measurement) => ({
       ...measurement,
       time: format(new Date(measurement.time), 'HH:mm:ss'),
@@ -117,12 +117,22 @@ const Home = ({
         setpoint: newSetpoint,
       } = JSON.parse(event.data);
 
+      const [, ...restMeasurements] = measurements;
+
       setFanOn(fanOn);
       setInputTemperature(inputTemperature + 1);
       setLastSync(new Date(lastSync));
       setMode(mode);
       setOutputTemperature(outputTemperature);
       setSetpoint(setpoint);
+      setMeasuremenets([
+        ...restMeasurements,
+        {
+          inputTemperature,
+          outputTemperature,
+          time: format(new Date(), 'HH:mm:ss'),
+        },
+      ]);
 
       if (newSetpoint !== setpoint) {
         setSetpoint(newSetpoint);
