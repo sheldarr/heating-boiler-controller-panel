@@ -13,13 +13,17 @@ axios.defaults.timeout = 5000;
 
 class CustomApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
     return (
       <>
         <CssBaseline />
         <SnackbarProvider maxSnack={3}>
           <div id="navbar" />
-          <PageTransition classNames="page-transition" timeout={300}>
+          <PageTransition
+            classNames="page-transition"
+            key={router.route}
+            timeout={300}
+          >
             <Component {...pageProps} />
           </PageTransition>
         </SnackbarProvider>
