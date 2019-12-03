@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -24,44 +25,56 @@ const Space = styled.div`
 interface Props {
   fanOn: boolean;
   lastSync: Date;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selector?: any;
 }
 
 const NavBar = ({ fanOn, lastSync }: Props) => {
+  const ref = useRef();
   const [relativeDistance, setRelativeDistance] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
 
   useInterval(() => {
     setRelativeDistance(new Date());
   }, 1000);
 
-  return (
-    <AppBar position="static">
-      <Toolbar>
-        <ContainerWithMargin>
-          <Typography variant="h6">Piec</Typography>
-        </ContainerWithMargin>
-        <ContainerWithMargin>
-          <FontAwesomeIcon
-            color={'white'}
-            icon={faFan}
-            size="2x"
-            spin={fanOn}
-          />
-        </ContainerWithMargin>
-        <Space />
-        <div>
-          <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
-          <div>
-            (
-            {formatDistance(lastSync, relativeDistance, {
-              includeSeconds: true,
-              locale: pl,
-            })}{' '}
-            temu)
-          </div>
-        </div>
-      </Toolbar>
-    </AppBar>
-  );
+  useEffect(() => {
+    ref.current = document.querySelector('#navbar');
+    setMounted(true);
+  }, []);
+
+  return mounted
+    ? createPortal(
+        <AppBar position="static">
+          <Toolbar>
+            <ContainerWithMargin>
+              <Typography variant="h6">Piec</Typography>
+            </ContainerWithMargin>
+            <ContainerWithMargin>
+              <FontAwesomeIcon
+                color={'white'}
+                icon={faFan}
+                size="2x"
+                spin={fanOn}
+              />
+            </ContainerWithMargin>
+            <Space />
+            <div>
+              <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
+              <div>
+                (
+                {formatDistance(lastSync, relativeDistance, {
+                  includeSeconds: true,
+                  locale: pl,
+                })}{' '}
+                temu)
+              </div>
+            </div>
+          </Toolbar>
+        </AppBar>,
+        ref.current
+      )
+    : null;
 };
 
 export default NavBar;
