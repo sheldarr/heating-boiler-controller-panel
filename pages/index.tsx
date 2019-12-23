@@ -20,7 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { format } from 'date-fns';
+import { differenceInSeconds, format } from 'date-fns';
 
 import NavBar from '../components/NavBar';
 import { registerCallback } from '../websocketClient';
@@ -78,6 +78,8 @@ const labelModeMap = {
   NORMAL: 'THERMOSTAT',
 };
 
+const MAX_LAG_IN_SECONDS_BEFORE_RELOAD = 10;
+
 const Home = ({
   enqueueSnackbar,
   initialFanOn,
@@ -118,6 +120,14 @@ const Home = ({
         outputTemperature,
         setpoint: newSetpoint,
       } = JSON.parse(event.data);
+
+      if (
+        lastSync &&
+        differenceInSeconds(new Date(), new Date(lastSync)) >
+          MAX_LAG_IN_SECONDS_BEFORE_RELOAD
+      ) {
+        location.reload();
+      }
 
       if (eventName === 'status') {
         setFanOn(fanOn);
