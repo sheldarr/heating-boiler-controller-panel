@@ -33,6 +33,11 @@
   resolved "https://registry.yarnpkg.com/@ampproject/toolbox-script-csp/-/toolbox-script-csp-1.1.1.tgz#0b049a1c86c99f300162a10e1b9ce83c6e354a45"
   integrity sha512-gACGfsVKinCy/977FSrlVgo6jxTZ0lcTCvCnRlNwvSOcxJVm+jJR3sP7/F43fpak9Gsq/EwFaatfnNMbunPc+w==
 
+"@anephenix/sarus@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@anephenix/sarus/-/sarus-0.2.2.tgz#81c376a2bf6aac89136323f95d33d6dbbe458a1d"
+  integrity sha512-fUnRgHaj5XHkk8ePJK6CXKszCtM6+z5lAM4YHDRKEqTQnSRtrSZjKlePye/nF2yiFbTldmuv1uIAs4Fm38qOCA==
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
