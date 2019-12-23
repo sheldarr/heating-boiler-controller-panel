@@ -16,7 +16,7 @@ const initialize = () => {
       ],
       error: [
         (error) => {
-          console.error('Socket encountered error: ', error.message);
+          console.error('Socket encountered error: ', error);
         },
       ],
       message: [
