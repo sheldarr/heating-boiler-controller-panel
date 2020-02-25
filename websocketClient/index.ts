@@ -1,6 +1,9 @@
 import Sarus from '@anephenix/sarus';
 
-const callbacksFns = [];
+const callbacksFns: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [eventName: string]: ((data: any) => void)[];
+} = {};
 let sarus = null;
 
 const initialize = () => {
@@ -21,7 +24,23 @@ const initialize = () => {
       ],
       message: [
         (event) => {
-          callbacksFns.forEach((callback) => callback(event));
+          if (!event.data) {
+            console.error('Missing event data');
+            return;
+          }
+
+          const data = JSON.parse(event.data);
+
+          const eventName = data.eventName;
+
+          if (!eventName) {
+            console.error('Missing event name');
+            return;
+          }
+
+          if (callbacksFns[eventName]) {
+            callbacksFns[eventName].forEach((callback) => callback(data));
+          }
         },
       ],
       open: [
@@ -39,8 +58,15 @@ const initialize = () => {
 
 initialize();
 
-export const registerCallback = (callback) => {
-  callbacksFns.push(callback);
+export const registerCallback = <T>(
+  eventName: string,
+  callback: (data: T) => void
+) => {
+  if (!callbacksFns[eventName]) {
+    callbacksFns[eventName] = [];
+  }
+
+  callbacksFns[eventName].push(callback);
 };
 
 export default sarus;

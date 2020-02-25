@@ -12,6 +12,12 @@ export type ControllerStatus = {
   setpoint: number;
 };
 
+export type ControllerMeasurement = {
+  inputTemperature: number;
+  outputTemperature: number;
+  time: string;
+};
+
 export const getControllerStatus = async () => {
   return axios
     .get<ControllerStatus>('/api/controller/status')

@@ -20,8 +20,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { differenceInSeconds, format } from 'date-fns';
+import { format } from 'date-fns';
 
+import { ControllerStatus, ControllerMeasurement } from '../api';
 import NavBar from '../components/NavBar';
 import { registerCallback } from '../websocketClient';
 
@@ -78,8 +79,6 @@ const labelModeMap = {
   NORMAL: 'THERMOSTAT',
 };
 
-const MAX_LAG_IN_SECONDS_BEFORE_RELOAD = 10;
-
 const Home = ({
   enqueueSnackbar,
   initialFanOn,
@@ -109,48 +108,38 @@ const Home = ({
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
-    registerCallback((event) => {
+    return registerCallback<ControllerStatus>('status', (status) => {
       const {
-        eventName,
         fanOn,
         inputTemperature,
         lastSync,
-        measurements,
         mode,
         outputTemperature,
-        setpoint: newSetpoint,
-      } = JSON.parse(event.data);
+        setpoint,
+      } = status;
 
-      if (
-        lastSync &&
-        differenceInSeconds(new Date(), new Date(lastSync)) >
-          MAX_LAG_IN_SECONDS_BEFORE_RELOAD
-      ) {
-        location.reload();
-      }
+      setFanOn(fanOn);
+      setInputTemperature(inputTemperature);
+      setLastSync(new Date(lastSync));
+      setMode(mode);
+      setOutputTemperature(outputTemperature);
+      setSetpoint(setpoint);
+    });
+  }, []);
 
-      if (eventName === 'status') {
-        setFanOn(fanOn);
-        setInputTemperature(inputTemperature + 1);
-        setLastSync(new Date(lastSync));
-        setMode(mode);
-        setOutputTemperature(outputTemperature);
-        setSetpoint(setpoint);
-
-        if (newSetpoint !== setpoint) {
-          setSetpoint(newSetpoint);
-          setDraftSetpoint(newSetpoint);
-        }
-      }
-      if (eventName === 'measurements') {
+  useEffect(() => {
+    registerCallback<{ measurements: ControllerMeasurement[] }>(
+      'measurements',
+      (data) => {
+        console.log(data);
         setMeasuremenets(
-          measurements.map((measurement) => ({
+          data.measurements.map((measurement) => ({
             ...measurement,
             time: format(new Date(measurement.time), 'HH:mm:ss'),
           }))
         );
       }
-    });
+    );
   }, []);
 
   const updateSetpoint = async (newSetpoint) => {
