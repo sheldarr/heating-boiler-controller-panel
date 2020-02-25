@@ -41,7 +41,7 @@ const ChartContainer = styled.div`
   margin-top: 4rem;
 `;
 
-const ToggleButtonsContainer = styled.div`
+const CenterContent = styled.div`
   margin-top: 1rem;
   text-align: center;
 `;
@@ -220,7 +220,7 @@ const Home = ({
               </OutputTemperature>
             </Grid>
             <Grid item xs={12}>
-              <ToggleButtonsContainer>
+              <CenterContent>
                 <ToggleButtonGroup
                   exclusive
                   onChange={(event, value) => {
@@ -242,30 +242,18 @@ const Home = ({
                     ON
                   </ToggleButton>
                 </ToggleButtonGroup>
-              </ToggleButtonsContainer>
+              </CenterContent>
             </Grid>
             {mode === 'NORMAL' && (
               <Grid item xs={12}>
                 <SliderContainer>
+                  <CenterContent>
+                    <Typography color="primary" variant="h4">
+                      {setpoint} °C
+                    </Typography>
+                  </CenterContent>
                   <Slider
-                    marks={[
-                      {
-                        label: '30°C',
-                        value: 30,
-                      },
-                      {
-                        label: '40°C',
-                        value: 40,
-                      },
-                      {
-                        label: '50°C',
-                        value: 50,
-                      },
-                      {
-                        label: '60°C',
-                        value: 60,
-                      },
-                    ]}
+                    marks
                     max={60}
                     min={30}
                     onChange={(event, value) => {
@@ -276,7 +264,8 @@ const Home = ({
                     }}
                     step={1}
                     value={draftSetpoint}
-                    valueLabelDisplay="on"
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => `${value}°C`}
                   />
                 </SliderContainer>
               </Grid>
