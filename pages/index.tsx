@@ -224,11 +224,9 @@ const Home = ({
                 <ToggleButtonGroup
                   exclusive
                   onChange={(event, value) => {
-                    if (value === null) {
-                      return updateMode(labelModeMap[mode]);
+                    if (value !== null) {
+                      updateMode(value);
                     }
-
-                    updateMode(value);
                   }}
                   value={labelModeMap[mode]}
                 >
