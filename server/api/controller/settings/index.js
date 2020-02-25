@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 const { broadcastControllerStatus } = require('../../../websocket');
-const db = require('../../../db');
 const logger = require('../../../logger');
 
 module.exports = (req, res) => {
