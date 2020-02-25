@@ -24,7 +24,12 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 
-import { ControllerStatus, ControllerMeasurement } from '../api';
+import {
+  ControllerStatus,
+  ControllerMeasurement,
+  setControllerSettings,
+  ControllerMode,
+} from '../api';
 import NavBar from '../components/NavBar';
 import { registerCallback } from '../websocketClient';
 
@@ -64,22 +69,23 @@ interface Props extends WithSnackbarProps {
   initialInputTemperature: number;
   initialLastSync: string;
   initialMeasurements: Measurement[];
-  initialMode: string;
+  initialMode: ControllerMode;
   initialOutputTemperature: number;
   initialSetpoint: number;
 }
 
-const modeLabelMap = {
-  FORCED_FAN_OFF: 'STALE WYŁĄCZONY',
-  FORCED_FAN_ON: 'STALE WŁĄCZONY',
-  THERMOSTAT: 'TERMOSTAT',
+const mapControllerModeToLabel = (mode: ControllerMode): string => {
+  switch (mode) {
+    case 'FORCED_FAN_OFF':
+      return 'STALE WYŁĄCZONY';
+    case 'FORCED_FAN_ON':
+      return 'STALE WYŁĄCZONY';
+    case 'NORMAL':
+      return 'TERMOSTAT';
+  }
 };
 
-const labelModeMap = {
-  FORCED_FAN_OFF: 'FORCED_FAN_OFF',
-  FORCED_FAN_ON: 'FORCED_FAN_ON',
-  NORMAL: 'THERMOSTAT',
-};
+const INITIAL_HYSTERESIS = 1.0;
 
 const Home = ({
   enqueueSnackbar,
@@ -103,10 +109,11 @@ const Home = ({
       time: format(new Date(measurement.time), 'HH:mm:ss'),
     }))
   );
+  const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [setpoint, setSetpoint] = useState(initialSetpoint);
   const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
   const [fanOn, setFanOn] = useState(initialFanOn);
-  const [mode, setMode] = useState(initialMode);
+  const [mode, setMode] = useState<ControllerMode>(initialMode);
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
   useEffect(() => {
@@ -144,13 +151,8 @@ const Home = ({
     );
   }, []);
 
-  const updateSetpoint = async (newSetpoint) => {
-    axios
-      .post('/api/controller/settings', {
-        hysteresis: 2.0,
-        mode,
-        setpoint: newSetpoint,
-      })
+  const updateSetpoint = async (newSetpoint: number) => {
+    setControllerSettings({ hysteresis, mode, setpoint: newSetpoint })
       .then(() => {
         enqueueSnackbar(`Ustawiono termostat na ${newSetpoint}°C`, {
           variant: 'success',
@@ -167,22 +169,21 @@ const Home = ({
       });
   };
 
-  const updateMode = async (newMode) => {
-    axios
-      .post('/api/controller/settings', {
-        hysteresis: 2.0,
-        mode: newMode === 'THERMOSTAT' ? 'NORMAL' : newMode,
-        setpoint,
-      })
+  const updateMode = async (newMode: ControllerMode) => {
+    setControllerSettings({
+      hysteresis,
+      mode: newMode,
+      setpoint,
+    })
       .then(() => {
         setMode(newMode);
-        enqueueSnackbar(`Ustawiono tryb ${modeLabelMap[newMode]}`, {
+        enqueueSnackbar(`Ustawiono tryb ${mapControllerModeToLabel(newMode)}`, {
           variant: 'success',
         });
       })
       .catch(() => {
         enqueueSnackbar(
-          `Nie udało się ustawić trybu ${modeLabelMap[newMode]}`,
+          `Nie udało się ustawić trybu ${mapControllerModeToLabel(newMode)}`,
           {
             variant: 'error',
           }
@@ -219,12 +220,12 @@ const Home = ({
                       updateMode(value);
                     }
                   }}
-                  value={labelModeMap[mode]}
+                  value={mode}
                 >
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
                     OFF
                   </ToggleButton>
-                  <ToggleButton key={2} value="THERMOSTAT">
+                  <ToggleButton key={2} value="NORMAL">
                     TERMOSTAT
                   </ToggleButton>
                   <ToggleButton key={3} value="FORCED_FAN_ON">
@@ -252,7 +253,7 @@ const Home = ({
                       setDraftSetpoint(value as number);
                     }}
                     onChangeCommitted={(event, value) => {
-                      updateSetpoint(value);
+                      updateSetpoint(value as number);
                     }}
                     value={draftSetpoint}
                     valueLabelDisplay="auto"
@@ -309,7 +310,9 @@ Home.getInitialProps = async () => {
       outputTemperature,
       setpoint,
     },
-  } = await axios.get(`${process.env.APP_API_URL}/controller/status`);
+  } = await axios.get<ControllerStatus>(
+    `${process.env.APP_API_URL}/controller/status`
+  );
   const { data: measurements } = await axios.get(
     `${process.env.APP_API_URL}/controller/measurements`
   );
