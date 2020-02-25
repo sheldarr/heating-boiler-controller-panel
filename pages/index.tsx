@@ -12,6 +12,7 @@ import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import range from 'lodash/range';
+import { format } from 'date-fns';
 import {
   LineChart,
   Line,
@@ -22,7 +23,6 @@ import {
   ReferenceLine,
   ResponsiveContainer,
 } from 'recharts';
-import { format } from 'date-fns';
 
 import {
   ControllerStatus,
@@ -140,7 +140,6 @@ const Home = ({
     registerCallback<{ measurements: ControllerMeasurement[] }>(
       'measurements',
       (data) => {
-        console.log(data);
         setMeasuremenets(
           data.measurements.map((measurement) => ({
             ...measurement,

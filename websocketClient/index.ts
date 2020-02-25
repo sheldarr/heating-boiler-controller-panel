@@ -10,6 +10,7 @@ const initialize = () => {
   if (!process.browser) {
     return;
   }
+
   sarus = new Sarus({
     eventListeners: {
       close: [
@@ -24,6 +25,10 @@ const initialize = () => {
       ],
       message: [
         (event) => {
+          if (document.hidden) {
+            console.log('Skipping websocket event');
+          }
+
           if (!event.data) {
             console.error('Missing event data');
             return;
