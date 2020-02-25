@@ -2,6 +2,8 @@ const axios = require('axios');
 
 const logger = require('../logger');
 
+const DATA_LENGTH_LOG_LIMIT = 128;
+
 function initializeAxios() {
   axios.interceptors.request.use((config) => {
     logger.info(
@@ -19,7 +21,7 @@ function initializeAxios() {
           response.config.method
         ).toUpperCase()} ${response.config.url} ${JSON.stringify(
           response.data
-        )} ${JSON.stringify(response.headers)}`
+        ).slice(DATA_LENGTH_LOG_LIMIT)} ${JSON.stringify(response.headers)}`
       );
 
       return response;
