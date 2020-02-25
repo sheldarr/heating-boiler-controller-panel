@@ -19,6 +19,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  ReferenceLine,
   ResponsiveContainer,
 } from 'recharts';
 import { format } from 'date-fns';
@@ -268,6 +269,11 @@ const Home = ({
                     <XAxis dataKey="time" />
                     <YAxis minTickGap={10} width={20} />
                     <Tooltip />
+                    <ReferenceLine
+                      stroke="#f44336"
+                      strokeDasharray="3 9"
+                      y={setpoint}
+                    />
                     <Line
                       dataKey="outputTemperature"
                       dot={false}
