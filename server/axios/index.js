@@ -28,15 +28,25 @@ function initializeAxios() {
     },
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error) => {
-      logger.error(
-        `ERROR EXTERNAL RESPONSE: ${error.response.status} ${String(
-          error.response.config.method
-        ).toUpperCase()}  ${error.response.config.url} ${
-          error.message
-        }${JSON.stringify(error.response.data)} ${JSON.stringify(
-          error.response.headers
-        )}`
-      );
+      if (error.response) {
+        logger.error(
+          `ERROR EXTERNAL RESPONSE: ${error.response.status} ${String(
+            error.response.config.method
+          ).toUpperCase()}  ${error.response.config.url} ${error.message}`,
+          {
+            data: error.response.data,
+            headers: error.response.headers,
+          }
+        );
+      } else if (error.request) {
+        logger.error(
+          `ERROR EXTERNAL REQUEST: ${String(
+            error.config.method
+          ).toUpperCase()} ${error.config.url} ${error.message}`
+        );
+      } else {
+        logger.error(`AXIOS ERROR: ${error.message}`);
+      }
 
       return Promise.reject(error);
     }
