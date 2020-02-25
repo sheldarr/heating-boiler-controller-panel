@@ -13,22 +13,6 @@ module.exports = (req, res) => {
     return res.status(400).send('BAD REQUEST');
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    db.setStatus(
-      Math.floor(Math.random() * (60 - 30 + 1)) + 30,
-      Math.floor(Math.random() * (60 - 30 + 1)) + 30,
-      setpoint,
-      hysteresis,
-      mode,
-      true,
-      new Date()
-    );
-
-    broadcastControllerStatus();
-
-    return res.status(200).send('OK');
-  }
-
   const settings = `${setpoint} ${hysteresis} ${mode}`;
 
   logger.warn(`Applying new settings: ${settings}`);
