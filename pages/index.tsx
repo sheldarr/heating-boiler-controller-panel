@@ -11,6 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import range from 'lodash/range';
 import {
   LineChart,
   Line,
@@ -240,7 +241,10 @@ const Home = ({
                     </Typography>
                   </CenterContent>
                   <Slider
-                    marks
+                    marks={range(30, 61).map((number) => ({
+                      label: number % 10 === 0 && `${number}°C`,
+                      value: number,
+                    }))}
                     max={60}
                     min={30}
                     onChange={(event, value) => {
@@ -249,7 +253,6 @@ const Home = ({
                     onChangeCommitted={(event, value) => {
                       updateSetpoint(value);
                     }}
-                    step={1}
                     value={draftSetpoint}
                     valueLabelDisplay="auto"
                     valueLabelFormat={(value) => `${value}°C`}
