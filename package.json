@@ -24,7 +24,7 @@
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "lowdb": "^1.0.0",
-    "next": "9.2.2",
+    "next": "9.3.2",
     "next-offline": "^5.0.0",
     "next-page-transitions": "^1.0.0-beta.2",
     "notistack": "^0.9.8",
