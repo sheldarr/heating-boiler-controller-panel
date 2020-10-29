@@ -12,7 +12,7 @@ const broadcast = (eventName, message) => {
         JSON.stringify({
           eventName,
           ...message,
-        })
+        }),
       );
     }
   });
@@ -39,7 +39,7 @@ const broadcastControllerStatus = async () => {
     hysteresis,
     mode,
     fanOn,
-    lastSync
+    lastSync,
   );
 
   const status = getStatus();

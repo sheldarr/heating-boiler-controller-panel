@@ -14,7 +14,7 @@ class CustomDocument extends Document {
         originalRenderPage({
           enhanceApp: (App) => (props) =>
             styledComponentsStyleSheet.collectStyles(
-              materialUiStyleSheets.collect(<App {...props} />)
+              materialUiStyleSheets.collect(<App {...props} />),
             ),
         });
 

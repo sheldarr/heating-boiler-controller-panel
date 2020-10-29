@@ -98,16 +98,16 @@ const Home = ({
   initialSetpoint,
 }: Props) => {
   const [inputTemperature, setInputTemperature] = useState(
-    initialInputTemperature
+    initialInputTemperature,
   );
   const [outputTemperature, setOutputTemperature] = useState(
-    initialOutputTemperature
+    initialOutputTemperature,
   );
   const [measurements, setMeasuremenets] = useState(
     initialMeasurements.map((measurement) => ({
       ...measurement,
       time: format(new Date(measurement.time), 'HH:mm:ss'),
-    }))
+    })),
   );
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [setpoint, setSetpoint] = useState(initialSetpoint);
@@ -144,9 +144,9 @@ const Home = ({
           data.measurements.map((measurement) => ({
             ...measurement,
             time: format(new Date(measurement.time), 'HH:mm:ss'),
-          }))
+          })),
         );
-      }
+      },
     );
   }, []);
 
@@ -163,7 +163,7 @@ const Home = ({
           `Nie udało się ustawić termostatu na ${newSetpoint}°C`,
           {
             variant: 'error',
-          }
+          },
         );
       });
   };
@@ -185,7 +185,7 @@ const Home = ({
           `Nie udało się ustawić trybu ${mapControllerModeToLabel(newMode)}`,
           {
             variant: 'error',
-          }
+          },
         );
       });
   };
@@ -310,10 +310,10 @@ Home.getInitialProps = async () => {
       setpoint,
     },
   } = await axios.get<ControllerStatus>(
-    `${process.env.APP_API_URL}/controller/status`
+    `${process.env.APP_API_URL}/controller/status`,
   );
   const { data: measurements } = await axios.get(
-    `${process.env.APP_API_URL}/controller/measurements`
+    `${process.env.APP_API_URL}/controller/measurements`,
   );
 
   return {

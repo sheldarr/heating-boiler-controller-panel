@@ -72,7 +72,7 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
             </div>
           </Toolbar>
         </AppBar>,
-        ref.current
+        ref.current,
       )
     : null;
 };

@@ -65,7 +65,7 @@ initialize();
 
 export const registerCallback = <T>(
   eventName: string,
-  callback: (data: T) => void
+  callback: (data: T) => void,
 ) => {
   if (!callbacksFns[eventName]) {
     callbacksFns[eventName] = [];

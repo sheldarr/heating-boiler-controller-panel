@@ -9,7 +9,7 @@ function initializeAxios() {
     logger.info(
       `EXTERNAL REQUEST: ${String(config.method).toUpperCase()} ${
         config.url
-      } ${JSON.stringify(config.data || {})} ${JSON.stringify(config.headers)}`
+      } ${JSON.stringify(config.data || {})} ${JSON.stringify(config.headers)}`,
     );
 
     return config;
@@ -18,10 +18,10 @@ function initializeAxios() {
     (response) => {
       logger.info(
         `EXTERNAL RESPONSE: ${response.status} ${String(
-          response.config.method
+          response.config.method,
         ).toUpperCase()} ${response.config.url} ${JSON.stringify(
-          response.data
-        ).slice(DATA_LENGTH_LOG_LIMIT)} ${JSON.stringify(response.headers)}`
+          response.data,
+        ).slice(DATA_LENGTH_LOG_LIMIT)} ${JSON.stringify(response.headers)}`,
       );
 
       return response;
@@ -31,25 +31,25 @@ function initializeAxios() {
       if (error.response) {
         logger.error(
           `ERROR EXTERNAL RESPONSE: ${error.response.status} ${String(
-            error.response.config.method
+            error.response.config.method,
           ).toUpperCase()}  ${error.response.config.url} ${error.message}`,
           {
             data: error.response.data,
             headers: error.response.headers,
-          }
+          },
         );
       } else if (error.request) {
         logger.error(
           `ERROR EXTERNAL REQUEST: ${String(
-            error.config.method
-          ).toUpperCase()} ${error.config.url} ${error.message}`
+            error.config.method,
+          ).toUpperCase()} ${error.config.url} ${error.message}`,
         );
       } else {
         logger.error(`AXIOS ERROR: ${error.message}`);
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 }
 

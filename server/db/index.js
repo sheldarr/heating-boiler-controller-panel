@@ -47,7 +47,7 @@ const setStatus = (
   hysteresis,
   mode,
   fanOn,
-  lastSync
+  lastSync,
 ) => {
   db.set('settings.fanOn', fanOn).write();
   db.set('settings.setpoint', setpoint).write();

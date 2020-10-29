@@ -40,7 +40,7 @@ handleByExpress.use((req, res, next) => {
     logger.info(
       `INTERNAL REQUEST: ${String(req.method).toUpperCase()} ${
         req.url
-      } ${JSON.stringify(req.body)} ${JSON.stringify(req.headers)}`
+      } ${JSON.stringify(req.body)} ${JSON.stringify(req.headers)}`,
     );
   }
 
@@ -49,12 +49,12 @@ handleByExpress.use((req, res, next) => {
 
 const broadcastControllerStatusCronJob = new CronJob(
   process.env.STATUS_CRON,
-  broadcastControllerStatus
+  broadcastControllerStatus,
 );
 
 const broadcastMeasurementsCronJob = new CronJob(
   process.env.MEASUREMENTS_CRON,
-  broadcastMeasurements
+  broadcastMeasurements,
 );
 
 app.prepare().then(() => {
@@ -65,7 +65,7 @@ app.prepare().then(() => {
     if (pathname.startsWith('/api')) {
       handleByExpress.get(
         '/api/controller/measurements',
-        apiControllerMeasurements
+        apiControllerMeasurements,
       );
       handleByExpress.get('/api/controller/status', apiControllerStatus);
       handleByExpress.post('/api/controller/settings', apiControllerSettings);
@@ -100,16 +100,16 @@ app.prepare().then(() => {
 
       broadcastControllerStatusCronJob.start();
       logger.info(
-        `> Broadcast controller status cron job started (${process.env.STATUS_CRON})`
+        `> Broadcast controller status cron job started (${process.env.STATUS_CRON})`,
       );
 
       broadcastMeasurementsCronJob.start();
       logger.info(
-        `> Broadcast measurements cron job started (${process.env.MEASUREMENTS_CRON})`
+        `> Broadcast measurements cron job started (${process.env.MEASUREMENTS_CRON})`,
       );
 
       logger.info(
-        `> Ready on http://${LISTEN_ON_ALL_INTERFACES}:${APP_PORT} ${process.env.NODE_ENV}`
+        `> Ready on http://${LISTEN_ON_ALL_INTERFACES}:${APP_PORT} ${process.env.NODE_ENV}`,
       );
     });
 });

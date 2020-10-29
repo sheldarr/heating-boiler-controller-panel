@@ -1,32 +1,37 @@
-.PHONY: help build
+include .env
 
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+USERID=$(shell id -u)
+NODE_IMAGE=node:14
 
-.DEFAULT_GOAL := help
-USER_ID = `id -u $$USER`
-UUID = `uuidgen`
+DOCKER_RUN = docker run \
+	--volume ${PWD}:/app \
+	--workdir /app \
+	--user ${USERID} \
+	--tty \
+	--interactive \
+	--rm
 
-DOCKER_COMPOSE_RUN_NODE = docker-compose run \
-	--name "$(UUID)" \
-	--user "$(USER_ID)" \
-	--rm \
-	node 
+DOCKER_RUN_NODE = $(DOCKER_RUN) \
+	--publish ${APP_PORT}:${APP_PORT} \
+	${NODE_IMAGE}
 
 build: ## build for production
-	$(DOCKER_COMPOSE_RUN_NODE) yarn build
+	$(DOCKER_RUN) ${NODE_IMAGE} yarn build
 
 dev: ## start development
-	docker-compose run --name heating-boiler-controller-panel --rm --service-ports heating-boiler-controller-panel
+	$(DOCKER_RUN_NODE) yarn dev
 
-install: ## stop all services
-	$(DOCKER_COMPOSE_RUN_NODE) yarn install
+test: ## run tests
+	$(DOCKER_RUN) ${NODE_IMAGE} yarn test
+
+test--watch: ## run tests in watch mode
+	$(DOCKER_RUN) ${NODE_IMAGE} yarn test:watch
+
+install: ## install dependencies
+	$(DOCKER_RUN) ${NODE_IMAGE} yarn install
 
 prod: ## start production
-	docker-compose -f docker-compose.yml -f docker-compose.production.yml up
+	$(DOCKER_RUN_NODE) yarn start
 
-down: ## stop all services
-	docker-compose down --remove-orphans
-
-lint:
-	$(DOCKER_COMPOSE_RUN_NODE) yarn lint
+lint: ## run linter
+	$(DOCKER_RUN) ${NODE_IMAGE} yarn lint

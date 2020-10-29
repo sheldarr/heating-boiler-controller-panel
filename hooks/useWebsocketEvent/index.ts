@@ -2,7 +2,7 @@ import { registerCallback } from '../../websocketClient';
 
 export default <T>(
   eventName: string,
-  callback: (data: T) => void
+  callback: (data: T) => void,
 ): (() => void) => {
   registerCallback(eventName, callback);
 

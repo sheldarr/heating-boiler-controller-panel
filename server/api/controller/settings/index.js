@@ -25,7 +25,7 @@ module.exports = (req, res) => {
     })
     .catch(() => {
       logger.warn(
-        `New settings could not be applied: ${JSON.stringify(settings)}`
+        `New settings could not be applied: ${JSON.stringify(settings)}`,
       );
       return res.status(500).send('ERROR');
     });
