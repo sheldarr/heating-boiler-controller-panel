@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -192,10 +191,6 @@ const Home = ({
 
   return (
     <div>
-      <Head>
-        <title>Piec</title>
-        <link href="/favicon.ico" rel="icon" />
-      </Head>
       <NavBar fanOn={fanOn} lastSync={lastSync} />
       <Container>
         <StyledPaper>

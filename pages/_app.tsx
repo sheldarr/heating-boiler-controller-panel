@@ -1,6 +1,10 @@
 import axios from 'axios';
 import React from 'react';
-import App from 'next/app';
+import { NextPage } from 'next';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import { PageTransition } from 'next-page-transitions';
@@ -11,12 +15,21 @@ config.autoAddCss = false;
 
 axios.defaults.timeout = 5000;
 
-class CustomApp extends App {
-  render() {
-    const { Component, pageProps, router } = this.props;
-    return (
-      <>
-        <CssBaseline />
+const CustomApp: NextPage<AppProps> = ({ Component, pageProps, router }) => {
+  const theme = createMuiTheme({
+    palette: {
+      primary: { main: '#3f51b5' },
+    },
+  });
+
+  return (
+    <>
+      <CssBaseline />
+      <Head>
+        <title>Piec</title>
+        <link href="/favicon.ico" rel="icon" />
+      </Head>
+      <ThemeProvider theme={theme}>
         <SnackbarProvider maxSnack={3}>
           <div id="navbar" />
           <PageTransition
@@ -27,27 +40,27 @@ class CustomApp extends App {
             <Component {...pageProps} />
           </PageTransition>
         </SnackbarProvider>
-        <style global jsx>{`
-          .page-transition-enter {
-            opacity: 0;
-            transform: translate3d(0, 20px, 0);
-          }
-          .page-transition-enter-active {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-            transition: opacity 300ms, transform 300ms;
-          }
-          .page-transition-exit {
-            opacity: 1;
-          }
-          .page-transition-exit-active {
-            opacity: 0;
-            transition: opacity 300ms;
-          }
-        `}</style>
-      </>
-    );
-  }
-}
+      </ThemeProvider>
+      <style global jsx>{`
+        .page-transition-enter {
+          opacity: 0;
+          transform: translate3d(0, 20px, 0);
+        }
+        .page-transition-enter-active {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+          transition: opacity 300ms, transform 300ms;
+        }
+        .page-transition-exit {
+          opacity: 1;
+        }
+        .page-transition-exit-active {
+          opacity: 0;
+          transition: opacity 300ms;
+        }
+      `}</style>
+    </>
+  );
+};
 
 export default CustomApp;
