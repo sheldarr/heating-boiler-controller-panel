@@ -24,12 +24,6 @@ export interface ControllerSettings {
   setpoint: number;
 }
 
-export const getControllerMeasurements = async () => {
-  return axios
-    .get<ControllerMeasurement[]>('/api/controller/measurements')
-    .then(({ data }) => data);
-};
-
 export const getControllerStatus = async () => {
   return axios
     .get<ControllerStatus>('/api/controller/status')
