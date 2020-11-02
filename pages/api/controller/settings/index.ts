@@ -1,9 +1,7 @@
-const axios = require('axios');
+import axios from 'axios';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const { broadcastControllerStatus } = require('../../../websocket');
-const logger = require('../../../logger');
-
-module.exports = (req, res) => {
+export default (req: NextApiRequest, res: NextApiResponse) => {
   const { setpoint, hysteresis, mode } = req.body;
 
   const notValidRequest = !setpoint || !hysteresis || !mode;
@@ -14,17 +12,16 @@ module.exports = (req, res) => {
 
   const settings = `${setpoint} ${hysteresis} ${mode}`;
 
-  logger.warn(`Applying new settings: ${settings}`);
+  console.warn(`Applying new settings: ${settings}`);
 
   axios
     .post(process.env.CONTROLLER_API_URL, settings)
     .then(() => {
-      broadcastControllerStatus();
-      logger.warn(`New settings applied: ${JSON.stringify(settings)}`);
+      console.warn(`New settings applied: ${JSON.stringify(settings)}`);
       return res.status(200).send('OK');
     })
     .catch(() => {
-      logger.warn(
+      console.warn(
         `New settings could not be applied: ${JSON.stringify(settings)}`,
       );
       return res.status(500).send('ERROR');

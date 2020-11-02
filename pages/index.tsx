@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -30,7 +30,7 @@ import {
   ControllerMode,
 } from '../api';
 import NavBar from '../components/NavBar';
-import { registerCallback } from '../websocketClient';
+import useSocket from '../hooks/useSocket';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -115,39 +115,32 @@ const Home = ({
   const [mode, setMode] = useState<ControllerMode>(initialMode);
   const [lastSync, setLastSync] = useState(new Date(initialLastSync));
 
-  useEffect(() => {
-    return registerCallback<ControllerStatus>('status', (status) => {
-      const {
-        fanOn,
-        inputTemperature,
-        lastSync,
-        mode,
-        outputTemperature,
-        setpoint,
-      } = status;
+  useSocket<ControllerStatus>('status', (status) => {
+    const {
+      fanOn,
+      inputTemperature,
+      lastSync,
+      mode,
+      outputTemperature,
+      setpoint,
+    } = status;
 
-      setFanOn(fanOn);
-      setInputTemperature(inputTemperature);
-      setLastSync(new Date(lastSync));
-      setMode(mode);
-      setOutputTemperature(outputTemperature);
-      setSetpoint(setpoint);
-    });
-  }, []);
+    setFanOn(fanOn);
+    setInputTemperature(inputTemperature);
+    setLastSync(new Date(lastSync));
+    setMode(mode);
+    setOutputTemperature(outputTemperature);
+    setSetpoint(setpoint);
+  });
 
-  useEffect(() => {
-    registerCallback<{ measurements: ControllerMeasurement[] }>(
-      'measurements',
-      (data) => {
-        setMeasuremenets(
-          data.measurements.map((measurement) => ({
-            ...measurement,
-            time: format(new Date(measurement.time), 'HH:mm:ss'),
-          })),
-        );
-      },
+  useSocket<ControllerMeasurement[]>('measurements', (data) => {
+    setMeasuremenets(
+      data.map((measurement) => ({
+        ...measurement,
+        time: format(new Date(measurement.time), 'HH:mm:ss'),
+      })),
     );
-  }, []);
+  });
 
   const updateSetpoint = async (newSetpoint: number) => {
     setControllerSettings({ hysteresis, mode, setpoint: newSetpoint })

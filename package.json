@@ -1,6 +1,6 @@
 {
   "name": "heating-boiler-controller-panel",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "nodemon server",
@@ -11,7 +11,6 @@
     "test:watch": "jest --watchAll"
   },
   "dependencies": {
-    "@anephenix/sarus": "^0.4.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.12",
@@ -19,10 +18,9 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.21.0",
-    "body-parser": "^1.19.0",
     "cron": "^1.8.2",
     "date-fns": "^2.16.1",
-    "express": "^4.17.1",
+    "http-status-codes": "^2.1.4",
     "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
     "next": "10.0.0",
@@ -33,16 +31,13 @@
     "react-dom": "17.0.1",
     "react-use": "^15.3.4",
     "recharts": "^1.8.5",
-    "styled-components": "^5.2.0",
-    "winston": "^3.3.3",
-    "ws": "^7.3.1"
+    "socket.io": "^2.3.0",
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.19.0",
     "@types/cron": "^1.7.2",
     "@types/eslint": "^7.2.4",
     "@types/eslint-plugin-prettier": "^3.1.0",
-    "@types/express": "^4.17.8",
     "@types/lodash": "^4.14.164",
     "@types/lowdb": "^1.0.9",
     "@types/node": "^14.14.6",
@@ -51,8 +46,8 @@
     "@types/react": "^16.9.55",
     "@types/react-dom": "16.9.9",
     "@types/recharts": "^1.8.16",
+    "@types/socket.io": "^2.1.11",
     "@types/styled-components": "^5.1.4",
-    "@types/ws": "^7.2.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "babel-plugin-styled-components": "^1.11.1",
