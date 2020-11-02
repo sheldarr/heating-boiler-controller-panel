@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import StatusCodes from 'http-status-codes';
 
-import { getMeasurements } from '../../../../server/db';
+import { getMeasurements } from '../../../../database';
 import { ControllerMeasurement } from '../../../../api';
 
 export default (

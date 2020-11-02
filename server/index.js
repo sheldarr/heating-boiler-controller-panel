@@ -3,7 +3,7 @@ const axios = require('axios');
 const next = require('next');
 const CronJob = require('cron').CronJob;
 
-const { getMeasurements, getStatus, setStatus } = require('./db');
+const { getMeasurements, getStatus, setStatus } = require('../database');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -22,8 +22,8 @@ const server = createServer((req, res) => {
 
 io = require('socket.io')(server);
 
-const broadcastControllerStatusCronJob = new CronJob(
-  process.env.STATUS_CRON,
+const updateControllerStatusCronJob = new CronJob(
+  process.env.UPDATE_STATUS_CRON,
   async () => {
     const { data } = await axios.get(process.env.CONTROLLER_API_URL);
 
@@ -47,7 +47,12 @@ const broadcastControllerStatusCronJob = new CronJob(
       fanOn,
       lastSync,
     );
+  },
+);
 
+const broadcastControllerStatusCronJob = new CronJob(
+  process.env.BROADCAST_STATUS_CRON,
+  async () => {
     const status = getStatus();
 
     io.emit('status', status);
@@ -55,7 +60,7 @@ const broadcastControllerStatusCronJob = new CronJob(
 );
 
 const broadcastMeasurementsCronJob = new CronJob(
-  process.env.MEASUREMENTS_CRON,
+  process.env.BROADCAST_MEASUREMENTS_CRON,
   () => {
     const measurements = getMeasurements();
 
@@ -70,14 +75,19 @@ app.prepare().then(() => {
       throw err;
     }
 
+    updateControllerStatusCronJob.start();
+    console.info(
+      `> Update controller status cron job started (${process.env.UPDATE_STATUS_CRON})`,
+    );
+
     broadcastControllerStatusCronJob.start();
     console.info(
-      `> Broadcast controller status cron job started (${process.env.STATUS_CRON})`,
+      `> Broadcast controller status cron job started (${process.env.BROADCAST_STATUS_CRON})`,
     );
 
     broadcastMeasurementsCronJob.start();
     console.info(
-      `> Broadcast measurements cron job started (${process.env.MEASUREMENTS_CRON})`,
+      `> Broadcast measurements cron job started (${process.env.BROADCAST_MEASUREMENTS_CRON})`,
     );
 
     console.info(

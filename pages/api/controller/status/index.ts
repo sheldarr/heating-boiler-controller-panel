@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import StatusCodes from 'http-status-codes';
 
-import { getStatus } from '../../../../server/db';
+import { getStatus } from '../../../../database';
 import { ControllerStatus } from '../../../../api';
 
 export default (
