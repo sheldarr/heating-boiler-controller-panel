@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const differenceInSeconds = require('date-fns/differenceInSeconds');
