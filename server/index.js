@@ -2,6 +2,16 @@ const { createServer } = require('http');
 const axios = require('axios');
 const next = require('next');
 const CronJob = require('cron').CronJob;
+const AxiosLogger = require('axios-logger');
+
+axios.default.interceptors.request.use(
+  AxiosLogger.requestLogger,
+  AxiosLogger.errorLogger,
+);
+axios.default.interceptors.response.use(
+  AxiosLogger.responseLogger,
+  AxiosLogger.errorLogger,
+);
 
 const { getMeasurements, getStatus, setStatus } = require('../database');
 
