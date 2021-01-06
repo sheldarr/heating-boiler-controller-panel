@@ -1,7 +1,7 @@
 include .env
 
 USERID=$(shell id -u)
-NODE_IMAGE=node:14
+NODE_IMAGE=node:14-alpine
 
 DOCKER_RUN = docker run \
 	--volume ${PWD}:/app \
