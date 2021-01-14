@@ -4,6 +4,9 @@ const next = require('next');
 const CronJob = require('cron').CronJob;
 const AxiosLogger = require('axios-logger');
 
+const { getMeasurements, getStatus, setStatus } = require('../database');
+const logger = require('./logger');
+
 axios.default.interceptors.request.use(
   AxiosLogger.requestLogger,
   AxiosLogger.errorLogger,
@@ -12,8 +15,6 @@ axios.default.interceptors.response.use(
   AxiosLogger.responseLogger,
   AxiosLogger.errorLogger,
 );
-
-const { getMeasurements, getStatus, setStatus } = require('../database');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -81,26 +82,26 @@ const broadcastMeasurementsCronJob = new CronJob(
 app.prepare().then(() => {
   server.listen(APP_PORT, LISTEN_ON_ALL_INTERFACES, (err) => {
     if (err) {
-      console.error(err);
+      logger.error(err);
       throw err;
     }
 
     updateControllerStatusCronJob.start();
-    console.info(
+    logger.info(
       `> Update controller status cron job started (${process.env.UPDATE_STATUS_CRON})`,
     );
 
     broadcastControllerStatusCronJob.start();
-    console.info(
+    logger.info(
       `> Broadcast controller status cron job started (${process.env.BROADCAST_STATUS_CRON})`,
     );
 
     broadcastMeasurementsCronJob.start();
-    console.info(
+    logger.info(
       `> Broadcast measurements cron job started (${process.env.BROADCAST_MEASUREMENTS_CRON})`,
     );
 
-    console.info(
+    logger.info(
       `> Ready on http://${LISTEN_ON_ALL_INTERFACES}:${APP_PORT} ${process.env.NODE_ENV}`,
     );
   });
