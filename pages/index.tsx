@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -76,6 +76,13 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
 
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
+  const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
+
+  useEffect(() => {
+    if (!isDraftSetpointEdited && status) {
+      setDraftSetpoint(status.setpoint);
+    }
+  }, [status]);
 
   useSocket<ControllerStatus>('status', () => {
     mutateStatus();
@@ -97,7 +104,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
         });
       })
       .catch(() => {
-        setDraftSetpoint(status?.setpoint);
         enqueueSnackbar(
           `Nie udało się ustawić termostatu na ${newSetpoint}°C`,
           {
@@ -184,9 +190,11 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     max={60}
                     min={30}
                     onChange={(event, value) => {
+                      setIsDraftSetpointEdited(true);
                       setDraftSetpoint(value as number);
                     }}
                     onChangeCommitted={(event, value) => {
+                      setIsDraftSetpointEdited(false);
                       updateSetpoint(value as number);
                     }}
                     value={draftSetpoint}
