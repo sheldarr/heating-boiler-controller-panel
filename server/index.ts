@@ -1,20 +1,15 @@
-const { createServer } = require('http');
-const axios = require('axios');
-const next = require('next');
-const CronJob = require('cron').CronJob;
-const AxiosLogger = require('axios-logger');
+import { createServer } from 'http';
+import axios from 'axios';
+import next from 'next';
+import { CronJob } from 'cron';
+import { Server } from 'socket.io';
+import { errorLogger, responseLogger, requestLogger } from 'axios-logger';
 
-const { getMeasurements, getStatus, setStatus } = require('../database');
-const logger = require('./logger');
+import { getMeasurements, getStatus, setStatus } from '../database';
+import logger from './logger';
 
-axios.default.interceptors.request.use(
-  AxiosLogger.requestLogger,
-  AxiosLogger.errorLogger,
-);
-axios.default.interceptors.response.use(
-  AxiosLogger.responseLogger,
-  AxiosLogger.errorLogger,
-);
+axios.interceptors.request.use(requestLogger, errorLogger);
+axios.interceptors.response.use(responseLogger, errorLogger);
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -23,15 +18,18 @@ const handleByNext = app.getRequestHandler();
 const APP_PORT = Number(process.env.APP_PORT);
 const LISTEN_ON_ALL_INTERFACES = '0.0.0.0';
 
-let io;
+// eslint-disable-next-line prefer-const
+let io: Server;
 
 const server = createServer((req, res) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   req.io = io;
 
   handleByNext(req, res);
 });
 
-io = require('socket.io')(server);
+io = new Server(server);
 
 const updateControllerStatusCronJob = new CronJob(
   process.env.UPDATE_STATUS_CRON,
@@ -80,6 +78,8 @@ const broadcastMeasurementsCronJob = new CronJob(
 );
 
 app.prepare().then(() => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   server.listen(APP_PORT, LISTEN_ON_ALL_INTERFACES, (err) => {
     if (err) {
       logger.error(err);
