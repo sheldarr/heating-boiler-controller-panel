@@ -4,12 +4,7 @@ import { format } from 'date-fns';
 
 import { WebSocketEvents } from '../../events';
 import useSocket from '../useSocket';
-
-interface Measurement {
-  inputTemperature: number;
-  outputTemperature: number;
-  time: string;
-}
+import { Measurement } from '../../database';
 
 const fetcher = (url: string) =>
   axios.get<Measurement[]>(url).then(({ data }) =>

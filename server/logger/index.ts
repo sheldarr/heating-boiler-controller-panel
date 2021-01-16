@@ -1,4 +1,4 @@
-const winston = require('winston');
+import winston from 'winston';
 
 const fileFormat = winston.format.combine(
   winston.format.timestamp(),
@@ -27,4 +27,4 @@ const logger = winston.createLogger({
   ],
 });
 
-module.exports = logger;
+export default logger;

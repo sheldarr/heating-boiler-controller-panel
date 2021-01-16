@@ -1,10 +1,27 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const differenceInSeconds = require('date-fns/differenceInSeconds');
+type Mode = 'NORMAL' | 'FORCED_FAN_OFF' | 'FORCED_FAN_ON';
 
-const adapter = new FileSync('db.json');
+export interface Measurement {
+  inputTemperature: number;
+  outputTemperature: number;
+  time: string;
+}
+
+interface Database {
+  'settings.fanOn': boolean;
+  'settings.hysteresis': number;
+  'settings.mode': Mode;
+  'settings.setpoint': number;
+  'status.lastSync': string;
+  'temperature.input': number;
+  'temperature.measurements': Measurement[];
+  'temperature.output': number;
+}
+
+const adapter = new FileSync<Database>('db.json');
 const db = low(adapter);
 
 db.defaults({
@@ -18,15 +35,15 @@ db.defaults({
   'temperature.output': 0,
 }).write();
 
-const getStatus = () => {
-  const adapter = new FileSync('db.json');
+export const getStatus = () => {
+  const adapter = new FileSync<Database>('db.json');
   const db = low(adapter);
 
   const fanOn = db.get('settings.fanOn').value();
   const hysteresis = db.get('settings.hysteresis').value();
   const inputTemperature = db.get('temperature.input').value();
   const lastSync = db.get('status.lastSync').value();
-  const mode = db.get('settings.mode').value();
+  const mode = db.get('settings.mode').value() as Mode;
   const outputTemperature = db.get('temperature.output').value();
   const setpoint = db.get('settings.setpoint').value();
 
@@ -41,14 +58,14 @@ const getStatus = () => {
   };
 };
 
-const getMeasurements = () => {
-  const adapter = new FileSync('db.json');
+export const getMeasurements = () => {
+  const adapter = new FileSync<Database>('db.json');
   const db = low(adapter);
 
   return db.get('temperature.measurements').value();
 };
 
-const setStatus = (
+export const setStatus = (
   inputTemperature,
   outputTemperature,
   setpoint,
@@ -72,10 +89,10 @@ const setStatus = (
 
   if (
     differenceInSeconds(new Date(), lastMeasurementDate) >=
-      process.env.MEASUREMENTS_SKIP_SECONDS ||
+      Number(process.env.MEASUREMENTS_SKIP_SECONDS) ||
     measurements.length === 0
   ) {
-    if (measurements.length >= process.env.MAX_AMOUNT_OF_MEASUREMENTS) {
+    if (measurements.length >= Number(process.env.MAX_AMOUNT_OF_MEASUREMENTS)) {
       measurements.shift();
     }
 
@@ -87,10 +104,4 @@ const setStatus = (
 
     db.set('temperature.measurements', measurements).write();
   }
-};
-
-module.exports = {
-  getMeasurements,
-  getStatus,
-  setStatus,
 };
