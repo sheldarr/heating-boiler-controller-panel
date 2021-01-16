@@ -6,7 +6,7 @@ export interface ControllerStatus {
   fanOn: boolean;
   hysteresis: number;
   inputTemperature: number;
-  lastSync: string;
+  lastSync: string | Date;
   mode: ControllerMode;
   outputTemperature: number;
   setpoint: number;

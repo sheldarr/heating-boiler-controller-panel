@@ -23,8 +23,8 @@ const Space = styled.div`
 `;
 
 interface Props {
-  fanOn: boolean;
-  lastSync: Date;
+  fanOn?: boolean;
+  lastSync?: Date;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selector?: any;
 }
@@ -59,17 +59,19 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
               />
             </ContainerWithMargin>
             <Space />
-            <div>
-              <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
+            {lastSync && (
               <div>
-                (
-                {formatDistance(lastSync, relativeDistance, {
-                  includeSeconds: true,
-                  locale: pl,
-                })}{' '}
-                temu)
+                <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
+                <div>
+                  (
+                  {formatDistance(lastSync, relativeDistance, {
+                    includeSeconds: true,
+                    locale: pl,
+                  })}{' '}
+                  temu)
+                </div>
               </div>
-            </div>
+            )}
           </Toolbar>
         </AppBar>,
         ref.current,

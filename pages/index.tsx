@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
@@ -11,7 +10,6 @@ import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import range from 'lodash/range';
-import { format } from 'date-fns';
 import {
   LineChart,
   Line,
@@ -31,6 +29,8 @@ import {
 } from '../api';
 import NavBar from '../components/NavBar';
 import useSocket from '../hooks/useSocket';
+import useStatus from '../hooks/useStatus';
+import useMeasurements from '../hooks/useMeasurements';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -57,22 +57,6 @@ const SliderContainer = styled.div`
   margin-top: 3rem;
 `;
 
-interface Measurement {
-  inputTemperature: number;
-  outputTemperature: number;
-  time: string;
-}
-
-interface Props extends WithSnackbarProps {
-  initialFanOn: boolean;
-  initialInputTemperature: number;
-  initialLastSync: string;
-  initialMeasurements: Measurement[];
-  initialMode: ControllerMode;
-  initialOutputTemperature: number;
-  initialSetpoint: number;
-}
-
 const mapControllerModeToLabel = (mode: ControllerMode): string => {
   switch (mode) {
     case 'FORCED_FAN_OFF':
@@ -86,71 +70,34 @@ const mapControllerModeToLabel = (mode: ControllerMode): string => {
 
 const INITIAL_HYSTERESIS = 1.0;
 
-const Home = ({
-  enqueueSnackbar,
-  initialFanOn,
-  initialInputTemperature,
-  initialMeasurements,
-  initialLastSync,
-  initialMode,
-  initialOutputTemperature,
-  initialSetpoint,
-}: Props) => {
-  const [inputTemperature, setInputTemperature] = useState(
-    initialInputTemperature,
-  );
-  const [outputTemperature, setOutputTemperature] = useState(
-    initialOutputTemperature,
-  );
-  const [measurements, setMeasuremenets] = useState(
-    initialMeasurements.map((measurement) => ({
-      ...measurement,
-      time: format(new Date(measurement.time), 'HH:mm:ss'),
-    })),
-  );
+const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
+  const { data: status, mutate: mutateStatus } = useStatus();
+  const { data: measurements, mutate: mutateMeasurements } = useMeasurements();
+
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
-  const [setpoint, setSetpoint] = useState(initialSetpoint);
-  const [draftSetpoint, setDraftSetpoint] = useState(initialSetpoint);
-  const [fanOn, setFanOn] = useState(initialFanOn);
-  const [mode, setMode] = useState<ControllerMode>(initialMode);
-  const [lastSync, setLastSync] = useState(new Date(initialLastSync));
+  const [draftSetpoint, setDraftSetpoint] = useState(0);
 
-  useSocket<ControllerStatus>('status', (status) => {
-    const {
-      fanOn,
-      inputTemperature,
-      lastSync,
-      mode,
-      outputTemperature,
-      setpoint,
-    } = status;
-
-    setFanOn(fanOn);
-    setInputTemperature(inputTemperature);
-    setLastSync(new Date(lastSync));
-    setMode(mode);
-    setOutputTemperature(outputTemperature);
-    setSetpoint(setpoint);
+  useSocket<ControllerStatus>('status', () => {
+    mutateStatus();
   });
 
-  useSocket<ControllerMeasurement[]>('measurements', (data) => {
-    setMeasuremenets(
-      data.map((measurement) => ({
-        ...measurement,
-        time: format(new Date(measurement.time), 'HH:mm:ss'),
-      })),
-    );
+  useSocket<ControllerMeasurement[]>('measurements', () => {
+    mutateMeasurements();
   });
 
   const updateSetpoint = async (newSetpoint: number) => {
-    setControllerSettings({ hysteresis, mode, setpoint: newSetpoint })
+    setControllerSettings({
+      hysteresis,
+      mode: status?.mode,
+      setpoint: newSetpoint,
+    })
       .then(() => {
         enqueueSnackbar(`Ustawiono termostat na ${newSetpoint}°C`, {
           variant: 'success',
         });
       })
       .catch(() => {
-        setDraftSetpoint(setpoint);
+        setDraftSetpoint(status?.setpoint);
         enqueueSnackbar(
           `Nie udało się ustawić termostatu na ${newSetpoint}°C`,
           {
@@ -164,10 +111,10 @@ const Home = ({
     setControllerSettings({
       hysteresis,
       mode: newMode,
-      setpoint,
+      setpoint: status?.setpoint,
     })
       .then(() => {
-        setMode(newMode);
+        mutateStatus();
         enqueueSnackbar(`Ustawiono tryb ${mapControllerModeToLabel(newMode)}`, {
           variant: 'success',
         });
@@ -184,18 +131,18 @@ const Home = ({
 
   return (
     <div>
-      <NavBar fanOn={fanOn} lastSync={lastSync} />
+      <NavBar fanOn={status?.fanOn} lastSync={status?.lastSync} />
       <Container>
         <StyledPaper>
           <Grid container>
             <Grid item xs={12}>
               <Typography gutterBottom color="error" variant="h2">
-                {outputTemperature.toFixed(3)} °C
+                {status?.outputTemperature.toFixed(3)} °C
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <OutputTemperature gutterBottom variant="h4">
-                {inputTemperature.toFixed(3)} °C
+                {status?.inputTemperature.toFixed(3)} °C
               </OutputTemperature>
             </Grid>
             <Grid item xs={12}>
@@ -207,7 +154,7 @@ const Home = ({
                       updateMode(value);
                     }
                   }}
-                  value={mode}
+                  value={status?.mode}
                 >
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
                     OFF
@@ -221,12 +168,12 @@ const Home = ({
                 </ToggleButtonGroup>
               </CenterContent>
             </Grid>
-            {mode === 'NORMAL' && (
+            {status?.mode === 'NORMAL' && (
               <Grid item xs={12}>
                 <SliderContainer>
                   <CenterContent>
                     <Typography color="primary" variant="h4">
-                      {setpoint} °C
+                      {status?.setpoint} °C
                     </Typography>
                   </CenterContent>
                   <Slider
@@ -260,7 +207,7 @@ const Home = ({
                     <ReferenceLine
                       stroke="#f44336"
                       strokeDasharray="3 9"
-                      y={setpoint}
+                      y={status?.setpoint}
                     />
                     <Line
                       dataKey="outputTemperature"
@@ -287,34 +234,4 @@ const Home = ({
   );
 };
 
-Home.getInitialProps = async () => {
-  const {
-    data: {
-      fanOn,
-      inputTemperature,
-      lastSync,
-      mode,
-      outputTemperature,
-      setpoint,
-    },
-  } = await axios.get<ControllerStatus>(
-    `${process.env.APP_API_URL}/controller/status`,
-  );
-  const { data: measurements } = await axios.get(
-    `${process.env.APP_API_URL}/controller/measurements`,
-  );
-
-  return {
-    initialFanOn: fanOn,
-    initialInputTemperature: inputTemperature,
-    initialLastSync: lastSync,
-    initialMeasurements: measurements,
-    initialMode: mode,
-    initialOutputTemperature: outputTemperature,
-    initialSetpoint: setpoint,
-  };
-};
-
-// eslint-disable-next-line
-//@ts-ignore
 export default withSnackbar(Home);

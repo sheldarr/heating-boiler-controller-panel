@@ -19,6 +19,9 @@ db.defaults({
 }).write();
 
 const getStatus = () => {
+  const adapter = new FileSync('db.json');
+  const db = low(adapter);
+
   const fanOn = db.get('settings.fanOn').value();
   const hysteresis = db.get('settings.hysteresis').value();
   const inputTemperature = db.get('temperature.input').value();
@@ -39,6 +42,9 @@ const getStatus = () => {
 };
 
 const getMeasurements = () => {
+  const adapter = new FileSync('db.json');
+  const db = low(adapter);
+
   return db.get('temperature.measurements').value();
 };
 
