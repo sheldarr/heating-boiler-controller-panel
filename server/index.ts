@@ -63,15 +63,12 @@ const updateControllerStatusCronJob = new CronJob(
   },
 );
 
-app.prepare().then(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  server.listen(APP_PORT, LISTEN_ON_ALL_INTERFACES, (err) => {
-    if (err) {
-      logger.error(err);
-      throw err;
-    }
+server.on('error', (error) => {
+  logger.error(error);
+});
 
+app.prepare().then(() => {
+  server.listen(APP_PORT, () => {
     updateControllerStatusCronJob.start();
     logger.info(
       `> Update controller status cron job started (${process.env.UPDATE_STATUS_CRON})`,
