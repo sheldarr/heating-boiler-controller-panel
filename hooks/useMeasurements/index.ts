@@ -13,7 +13,7 @@ interface Measurement {
 const fetcher = (url: string) =>
   axios.get<Measurement[]>(url).then(({ data }) => data);
 
-const useStatus = () => {
+const useMeasurements = () => {
   const response = useSWR('/api/controller/measurements', fetcher);
 
   useSocket(WebSocketEvents.REFRESH_MEASUREMENTS, () => {
@@ -23,4 +23,4 @@ const useStatus = () => {
   return response;
 };
 
-export default useStatus;
+export default useMeasurements;
