@@ -21,23 +21,26 @@ interface Database {
   'temperature.output': number;
 }
 
-const adapter = new FileSync<Database>('db.json');
-const db = low(adapter);
-
-db.defaults({
-  'settings.fanOn': false,
-  'settings.hysteresis': 2,
-  'settings.mode': 'NORMAL',
-  'settings.setpoint': 40,
-  'status.lastSync': new Date(),
-  'temperature.input': 0,
-  'temperature.measurements': [],
-  'temperature.output': 0,
-}).write();
-
-export const getStatus = () => {
+const getDatabase = () => {
   const adapter = new FileSync<Database>('db.json');
   const db = low(adapter);
+
+  db.defaults({
+    'settings.fanOn': false,
+    'settings.hysteresis': 2,
+    'settings.mode': 'NORMAL',
+    'settings.setpoint': 40,
+    'status.lastSync': new Date(),
+    'temperature.input': 0,
+    'temperature.measurements': [],
+    'temperature.output': 0,
+  }).write();
+
+  return db;
+};
+
+export const getStatus = () => {
+  const db = getDatabase();
 
   const fanOn = db.get('settings.fanOn').value();
   const hysteresis = db.get('settings.hysteresis').value();
@@ -59,8 +62,7 @@ export const getStatus = () => {
 };
 
 export const getMeasurements = () => {
-  const adapter = new FileSync<Database>('db.json');
-  const db = low(adapter);
+  const db = getDatabase();
 
   return db.get('temperature.measurements').value();
 };
@@ -74,6 +76,8 @@ export const setStatus = (
   fanOn,
   lastSync,
 ) => {
+  const db = getDatabase();
+
   db.set('settings.fanOn', fanOn).write();
   db.set('settings.setpoint', setpoint).write();
   db.set('settings.hysteresis', hysteresis).write();
