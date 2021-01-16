@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon server",
     "build": "next build",
-    "start": "NODE_ENV=production node-ts server",
+    "start": "NODE_ENV=production ts-node server",
     "lint": "eslint '.' --ext .js --ext .jsx --ext .ts --ext .tsx",
     "test": "jest",
     "test:watch": "jest --watchAll"
