@@ -5,7 +5,8 @@ import { CronJob } from 'cron';
 import { Server } from 'socket.io';
 import { errorLogger, responseLogger, requestLogger } from 'axios-logger';
 
-import { getMeasurements, getStatus, setStatus } from '../database';
+import { setStatus } from '../database';
+import { WebSocketEvents } from '../events';
 import logger from './logger';
 
 axios.interceptors.request.use(requestLogger, errorLogger);
@@ -47,6 +48,9 @@ const updateControllerStatusCronJob = new CronJob(
 
     const lastSync = new Date();
 
+    io.emit(WebSocketEvents.REFRESH_MEASUREMENTS);
+    io.emit(WebSocketEvents.REFRESH_STATUS);
+
     setStatus(
       inputTemperature,
       outputTemperature,
@@ -56,24 +60,6 @@ const updateControllerStatusCronJob = new CronJob(
       fanOn,
       lastSync,
     );
-  },
-);
-
-const broadcastControllerStatusCronJob = new CronJob(
-  process.env.BROADCAST_STATUS_CRON,
-  async () => {
-    const status = getStatus();
-
-    io.emit('status', status);
-  },
-);
-
-const broadcastMeasurementsCronJob = new CronJob(
-  process.env.BROADCAST_MEASUREMENTS_CRON,
-  () => {
-    const measurements = getMeasurements();
-
-    io.emit('measurements', measurements);
   },
 );
 
@@ -89,16 +75,6 @@ app.prepare().then(() => {
     updateControllerStatusCronJob.start();
     logger.info(
       `> Update controller status cron job started (${process.env.UPDATE_STATUS_CRON})`,
-    );
-
-    broadcastControllerStatusCronJob.start();
-    logger.info(
-      `> Broadcast controller status cron job started (${process.env.BROADCAST_STATUS_CRON})`,
-    );
-
-    broadcastMeasurementsCronJob.start();
-    logger.info(
-      `> Broadcast measurements cron job started (${process.env.BROADCAST_MEASUREMENTS_CRON})`,
     );
 
     logger.info(

@@ -21,14 +21,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-import {
-  ControllerStatus,
-  ControllerMeasurement,
-  setControllerSettings,
-  ControllerMode,
-} from '../api';
+import { setControllerSettings, ControllerMode } from '../api';
 import NavBar from '../components/NavBar';
-import useSocket from '../hooks/useSocket';
 import useStatus from '../hooks/useStatus';
 import useMeasurements from '../hooks/useMeasurements';
 
@@ -71,8 +65,8 @@ const mapControllerModeToLabel = (mode: ControllerMode): string => {
 const INITIAL_HYSTERESIS = 1.0;
 
 const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
-  const { data: status, mutate: mutateStatus } = useStatus();
-  const { data: measurements, mutate: mutateMeasurements } = useMeasurements();
+  const { data: status } = useStatus();
+  const { data: measurements } = useMeasurements();
 
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
@@ -83,14 +77,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
       setDraftSetpoint(status.setpoint);
     }
   }, [status]);
-
-  useSocket<ControllerStatus>('status', () => {
-    mutateStatus();
-  });
-
-  useSocket<ControllerMeasurement[]>('measurements', () => {
-    mutateMeasurements();
-  });
 
   const updateSetpoint = async (newSetpoint: number) => {
     setControllerSettings({
@@ -120,7 +106,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
       setpoint: status?.setpoint,
     })
       .then(() => {
-        mutateStatus();
         enqueueSnackbar(`Ustawiono tryb ${mapControllerModeToLabel(newMode)}`, {
           variant: 'success',
         });
