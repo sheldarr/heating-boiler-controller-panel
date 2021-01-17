@@ -10,6 +10,9 @@ import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import range from 'lodash/range';
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
+import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 
 import {
   LineChart,
@@ -73,7 +76,8 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   const [draftSetpoint, setDraftSetpoint] = useState(0);
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
 
-  const [lastMeasurement] = measurements?.slice(-1) || [];
+  const [penultimateMeasurement, lastMeasurement] =
+    measurements?.slice(-2) || [];
 
   useEffect(() => {
     if (!isDraftSetpointEdited && settings) {
@@ -133,6 +137,24 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
               <Grid item>
                 <Typography gutterBottom color="error" variant="h2">
                   {lastMeasurement?.outputTemperature.toFixed(3)} °C
+                  {penultimateMeasurement &&
+                    lastMeasurement &&
+                    penultimateMeasurement.outputTemperature <
+                      lastMeasurement.outputTemperature && (
+                      <TrendingUpIcon style={{ fontSize: 40 }} />
+                    )}
+                  {penultimateMeasurement &&
+                    lastMeasurement &&
+                    penultimateMeasurement.outputTemperature ==
+                      lastMeasurement.outputTemperature && (
+                      <TrendingFlatIcon style={{ fontSize: 40 }} />
+                    )}
+                  {penultimateMeasurement &&
+                    lastMeasurement &&
+                    penultimateMeasurement.outputTemperature >
+                      lastMeasurement.outputTemperature && (
+                      <TrendingDownIcon style={{ fontSize: 40 }} />
+                    )}
                 </Typography>
               </Grid>
               <Grid item>
