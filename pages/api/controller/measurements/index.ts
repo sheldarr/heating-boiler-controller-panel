@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { StatusCodes } from 'http-status-codes';
-import { format } from 'date-fns';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 import { Measurement, getMeasurements } from '../../../../database';
 
@@ -10,7 +10,10 @@ export default (req: NextApiRequest, res: NextApiResponse<Measurement[]>) => {
   res.status(StatusCodes.OK).json(
     measurements.map((measurement) => ({
       ...measurement,
-      time: format(new Date(measurement.time), 'HH:mm:ss'),
+      time: format(
+        new Date(utcToZonedTime(measurement.time, process.env.TIMEZONE)),
+        'HH:mm:ss',
+      ),
     })),
   );
 };

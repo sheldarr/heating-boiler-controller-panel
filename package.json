@@ -23,6 +23,7 @@
     "axios-logger": "^2.5.0",
     "cron": "^1.8.2",
     "date-fns": "^2.16.1",
+    "date-fns-tz": "^1.0.12",
     "http-status-codes": "^2.1.4",
     "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
