@@ -225,11 +225,13 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <XAxis dataKey="time" />
                     <YAxis minTickGap={10} width={20} />
                     <Tooltip />
-                    <ReferenceLine
-                      stroke="#f44336"
-                      strokeDasharray="3 9"
-                      y={settings?.setpoint}
-                    />
+                    {settings?.mode === 'NORMAL' && (
+                      <ReferenceLine
+                        stroke="#f44336"
+                        strokeDasharray="3 9"
+                        y={settings?.setpoint}
+                      />
+                    )}
                     <Line
                       dataKey="outputTemperature"
                       dot={false}
@@ -265,7 +267,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
           </DialogContent>
           <DialogActions>
             <Button
-              autoFocus
               color="secondary"
               onClick={() => {
                 setDraftSetpoint(settings?.setpoint);
@@ -276,7 +277,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
               Niy
             </Button>
             <Button
-              autoFocus
               color="primary"
               onClick={() => {
                 updateSetpoint(draftSetpoint);
