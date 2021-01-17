@@ -10,6 +10,7 @@ import { withSnackbar, WithSnackbarProps } from 'notistack';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import range from 'lodash/range';
+
 import {
   LineChart,
   Line,
@@ -71,8 +72,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
-
-  console.log(measurements);
 
   const [lastMeasurement] = measurements?.slice(-1) || [];
 
