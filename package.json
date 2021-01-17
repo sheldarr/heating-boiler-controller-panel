@@ -7,7 +7,7 @@
     "build:server": "tsc --project tsconfig.server.json",
     "build:next": "next build",
     "build": "yarn build:next && yarn build:server",
-    "start": "NODE_ENV=production node dist",
+    "start": "NODE_ENV=production node dist/server",
     "lint": "eslint '.' --ext .js --ext .jsx --ext .ts --ext .tsx",
     "test": "jest",
     "test:watch": "jest --watchAll"
