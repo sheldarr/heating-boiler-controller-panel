@@ -129,10 +129,17 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
       <Container>
         <StyledPaper>
           <Grid container>
-            <Grid item xs={12}>
-              <Typography gutterBottom color="error" variant="h2">
-                {lastMeasurement?.outputTemperature.toFixed(3)} °C
-              </Typography>
+            <Grid container item justify="space-between" xs={12}>
+              <Grid item>
+                <Typography gutterBottom color="error" variant="h2">
+                  {lastMeasurement?.outputTemperature.toFixed(3)} °C
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography gutterBottom color="primary" variant="h2">
+                  {settings && `⎎${hysteresis}`}
+                </Typography>
+              </Grid>
             </Grid>
             <Grid item xs={12}>
               <OutputTemperature gutterBottom variant="h4">
