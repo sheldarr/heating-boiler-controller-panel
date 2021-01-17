@@ -133,40 +133,40 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
       <Container>
         <StyledPaper>
           <Grid container>
+            <Grid item xs={12}>
+              <Typography gutterBottom color="error" variant="h2">
+                {lastMeasurement?.outputTemperature.toFixed(3)} °C
+                {penultimateMeasurement &&
+                  lastMeasurement &&
+                  penultimateMeasurement.outputTemperature <
+                    lastMeasurement.outputTemperature && (
+                    <TrendingUpIcon style={{ fontSize: 40 }} />
+                  )}
+                {penultimateMeasurement &&
+                  lastMeasurement &&
+                  penultimateMeasurement.outputTemperature ==
+                    lastMeasurement.outputTemperature && (
+                    <TrendingFlatIcon style={{ fontSize: 40 }} />
+                  )}
+                {penultimateMeasurement &&
+                  lastMeasurement &&
+                  penultimateMeasurement.outputTemperature >
+                    lastMeasurement.outputTemperature && (
+                    <TrendingDownIcon style={{ fontSize: 40 }} />
+                  )}
+              </Typography>
+            </Grid>
             <Grid container item justify="space-between" xs={12}>
               <Grid item>
-                <Typography gutterBottom color="error" variant="h2">
-                  {lastMeasurement?.outputTemperature.toFixed(3)} °C
-                  {penultimateMeasurement &&
-                    lastMeasurement &&
-                    penultimateMeasurement.outputTemperature <
-                      lastMeasurement.outputTemperature && (
-                      <TrendingUpIcon style={{ fontSize: 40 }} />
-                    )}
-                  {penultimateMeasurement &&
-                    lastMeasurement &&
-                    penultimateMeasurement.outputTemperature ==
-                      lastMeasurement.outputTemperature && (
-                      <TrendingFlatIcon style={{ fontSize: 40 }} />
-                    )}
-                  {penultimateMeasurement &&
-                    lastMeasurement &&
-                    penultimateMeasurement.outputTemperature >
-                      lastMeasurement.outputTemperature && (
-                      <TrendingDownIcon style={{ fontSize: 40 }} />
-                    )}
-                </Typography>
+                <OutputTemperature gutterBottom variant="h4">
+                  {lastMeasurement?.inputTemperature.toFixed(3)} °C
+                </OutputTemperature>
               </Grid>
               <Grid item>
-                <Typography gutterBottom color="primary" variant="h2">
+                <Typography gutterBottom color="primary" variant="h4">
                   {settings && `⎎${hysteresis}`}
                 </Typography>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
-              <OutputTemperature gutterBottom variant="h4">
-                {lastMeasurement?.inputTemperature.toFixed(3)} °C
-              </OutputTemperature>
             </Grid>
             <Grid item xs={12}>
               <CenterContent>
