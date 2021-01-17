@@ -11,7 +11,6 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import range from 'lodash/range';
 import TrendingDownIcon from '@material-ui/icons/TrendingDown';
-import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -35,6 +34,7 @@ import { setControllerSettings, ControllerMode } from '../api';
 import NavBar from '../components/NavBar';
 import useMeasurements from '../hooks/useMeasurements';
 import useSettings from '../hooks/useSettings';
+import useTrend from '../hooks/useTrend';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -77,6 +77,7 @@ const INITIAL_HYSTERESIS = 1.0;
 const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   const { data: settings } = useSettings();
   const { data: measurements } = useMeasurements();
+  const { data: trend } = useTrend();
 
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
@@ -86,8 +87,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
     setIsSetpointConfirmationDialogOpen,
   ] = useState(false);
 
-  const [penultimateMeasurement, lastMeasurement] =
-    measurements?.slice(-2) || [];
+  const [lastMeasurement] = measurements?.slice(-1) || [];
 
   useEffect(() => {
     if (!isDraftSetpointEdited && settings) {
@@ -146,24 +146,10 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
             <Grid item xs={12}>
               <Typography gutterBottom color="error" variant="h2">
                 {lastMeasurement?.outputTemperature.toFixed(3)} °C
-                {penultimateMeasurement &&
-                  lastMeasurement &&
-                  penultimateMeasurement.outputTemperature <
-                    lastMeasurement.outputTemperature && (
-                    <TrendingUpIcon style={{ fontSize: 40 }} />
-                  )}
-                {penultimateMeasurement &&
-                  lastMeasurement &&
-                  penultimateMeasurement.outputTemperature ==
-                    lastMeasurement.outputTemperature && (
-                    <TrendingFlatIcon style={{ fontSize: 40 }} />
-                  )}
-                {penultimateMeasurement &&
-                  lastMeasurement &&
-                  penultimateMeasurement.outputTemperature >
-                    lastMeasurement.outputTemperature && (
-                    <TrendingDownIcon style={{ fontSize: 40 }} />
-                  )}
+                {trend === 'UP' && <TrendingUpIcon style={{ fontSize: 40 }} />}
+                {trend === 'DOWN' && (
+                  <TrendingDownIcon style={{ fontSize: 40 }} />
+                )}
               </Typography>
             </Grid>
             <Grid container item justify="space-between" xs={12}>

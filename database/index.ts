@@ -4,6 +4,8 @@ import differenceInSeconds from 'date-fns/differenceInSeconds';
 
 type Mode = 'NORMAL' | 'FORCED_FAN_OFF' | 'FORCED_FAN_ON';
 
+export type Trend = 'DOWN' | 'UP' | 'UNKNOWN';
+
 export interface Measurement {
   inputTemperature: number;
   outputTemperature: number;
@@ -21,6 +23,7 @@ export interface Settings {
 interface Database {
   measurements: Measurement[];
   settings: Settings;
+  trend: Trend;
 }
 
 const getDatabase = () => {
@@ -36,6 +39,7 @@ const getDatabase = () => {
       mode: 'NORMAL',
       setpoint: 40,
     },
+    trend: 'UNKNOWN',
   }).write();
 
   return db;
@@ -63,6 +67,29 @@ export const addMeasurement = (measurement: Measurement) => {
   const db = getDatabase();
 
   const measurements = db.get('measurements').value();
+  const trend = db.get('trend').value() as Trend;
+
+  const [penultimateMeasurement, lastMeasurement] = measurements.slice(-2);
+
+  if (penultimateMeasurement && lastMeasurement) {
+    if (trend === 'UP' || trend === 'UNKNOWN') {
+      if (
+        lastMeasurement.outputTemperature <
+        penultimateMeasurement.outputTemperature
+      ) {
+        db.set('trend', 'DOWN').write();
+      }
+    }
+
+    if (trend === 'DOWN' || trend === 'UNKNOWN') {
+      if (
+        lastMeasurement.outputTemperature >
+        penultimateMeasurement.outputTemperature
+      ) {
+        db.set('trend', 'UP').write();
+      }
+    }
+  }
 
   const lastMeasurementDate =
     measurements.length && new Date(measurements[measurements.length - 1].time);
@@ -80,4 +107,10 @@ export const addMeasurement = (measurement: Measurement) => {
 
     db.set('measurements', measurements).write();
   }
+};
+
+export const getTrend = () => {
+  const db = getDatabase();
+
+  return db.get('trend').value() as Trend;
 };
