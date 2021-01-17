@@ -5,8 +5,14 @@ import { CronJob } from 'cron';
 import { Server } from 'socket.io';
 import { errorLogger, responseLogger, requestLogger } from 'axios-logger';
 
-import { setStatus } from '../database';
+import {
+  addMeasurement,
+  Measurement,
+  setSettings,
+  Settings,
+} from '../database';
 import { WebSocketEvents } from '../events';
+import { ControllerStatus } from '../api';
 import logger from './logger';
 
 axios.interceptors.request.use(requestLogger, errorLogger);
@@ -35,7 +41,9 @@ io = new Server(server);
 const updateControllerStatusCronJob = new CronJob(
   process.env.UPDATE_STATUS_CRON,
   async () => {
-    const { data } = await axios.get(process.env.CONTROLLER_API_URL);
+    const { data } = await axios.get<ControllerStatus>(
+      process.env.CONTROLLER_API_URL,
+    );
 
     const {
       inputTemperature,
@@ -46,20 +54,28 @@ const updateControllerStatusCronJob = new CronJob(
       setpoint,
     } = data;
 
-    const lastSync = new Date();
-
     io.emit(WebSocketEvents.REFRESH_MEASUREMENTS);
-    io.emit(WebSocketEvents.REFRESH_STATUS);
+    io.emit(WebSocketEvents.REFRESH_SETTINGS);
 
-    setStatus(
+    const lastSync = new Date().toISOString();
+
+    const settings: Settings = {
+      fanOn,
+      hysteresis,
+      lastSync,
+      mode,
+      setpoint,
+    };
+
+    setSettings(settings);
+
+    const measurement: Measurement = {
       inputTemperature,
       outputTemperature,
-      setpoint,
-      hysteresis,
-      mode,
-      fanOn,
-      lastSync,
-    );
+      time: lastSync,
+    };
+
+    addMeasurement(measurement);
   },
 );
 

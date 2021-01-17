@@ -24,7 +24,7 @@ const Space = styled.div`
 
 interface Props {
   fanOn?: boolean;
-  lastSync?: Date;
+  lastSync?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selector?: any;
 }
@@ -61,10 +61,10 @@ const NavBar = ({ fanOn, lastSync }: Props) => {
             <Space />
             {lastSync && (
               <div>
-                <LastSync>{format(lastSync, 'HH:mm:ss')}</LastSync>
+                <LastSync>{format(new Date(lastSync), 'HH:mm:ss')}</LastSync>
                 <div>
                   (
-                  {formatDistance(lastSync, relativeDistance, {
+                  {formatDistance(new Date(lastSync), relativeDistance, {
                     includeSeconds: true,
                     locale: pl,
                   })}{' '}

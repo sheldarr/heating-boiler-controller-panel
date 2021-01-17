@@ -12,12 +12,6 @@ export interface ControllerStatus {
   setpoint: number;
 }
 
-export interface ControllerMeasurement {
-  inputTemperature: number;
-  outputTemperature: number;
-  time: string;
-}
-
 export interface ControllerSettings {
   hysteresis: number;
   mode: ControllerMode;

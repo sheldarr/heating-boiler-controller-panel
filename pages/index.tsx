@@ -23,8 +23,8 @@ import {
 
 import { setControllerSettings, ControllerMode } from '../api';
 import NavBar from '../components/NavBar';
-import useStatus from '../hooks/useStatus';
 import useMeasurements from '../hooks/useMeasurements';
+import useSettings from '../hooks/useSettings';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -65,23 +65,27 @@ const mapControllerModeToLabel = (mode: ControllerMode): string => {
 const INITIAL_HYSTERESIS = 1.0;
 
 const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
-  const { data: status } = useStatus();
+  const { data: settings } = useSettings();
   const { data: measurements } = useMeasurements();
 
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
 
+  console.log(measurements);
+
+  const [lastMeasurement] = measurements?.slice(-1) || [];
+
   useEffect(() => {
-    if (!isDraftSetpointEdited && status) {
-      setDraftSetpoint(status.setpoint);
+    if (!isDraftSetpointEdited && settings) {
+      setDraftSetpoint(settings.setpoint);
     }
-  }, [status]);
+  }, [settings]);
 
   const updateSetpoint = async (newSetpoint: number) => {
     setControllerSettings({
       hysteresis,
-      mode: status?.mode,
+      mode: settings?.mode,
       setpoint: newSetpoint,
     })
       .then(() => {
@@ -103,7 +107,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
     setControllerSettings({
       hysteresis,
       mode: newMode,
-      setpoint: status?.setpoint,
+      setpoint: settings?.setpoint,
     })
       .then(() => {
         enqueueSnackbar(`Ustawiono tryb ${mapControllerModeToLabel(newMode)}`, {
@@ -122,18 +126,18 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
 
   return (
     <div>
-      <NavBar fanOn={status?.fanOn} lastSync={status?.lastSync} />
+      <NavBar fanOn={settings?.fanOn} lastSync={settings?.lastSync} />
       <Container>
         <StyledPaper>
           <Grid container>
             <Grid item xs={12}>
               <Typography gutterBottom color="error" variant="h2">
-                {status?.outputTemperature.toFixed(3)} °C
+                {lastMeasurement?.outputTemperature.toFixed(3)} °C
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <OutputTemperature gutterBottom variant="h4">
-                {status?.inputTemperature.toFixed(3)} °C
+                {lastMeasurement?.inputTemperature.toFixed(3)} °C
               </OutputTemperature>
             </Grid>
             <Grid item xs={12}>
@@ -145,7 +149,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                       updateMode(value);
                     }
                   }}
-                  value={status?.mode}
+                  value={settings?.mode}
                 >
                   <ToggleButton key={1} value="FORCED_FAN_OFF">
                     OFF
@@ -159,12 +163,12 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                 </ToggleButtonGroup>
               </CenterContent>
             </Grid>
-            {status?.mode === 'NORMAL' && (
+            {settings?.mode === 'NORMAL' && (
               <Grid item xs={12}>
                 <SliderContainer>
                   <CenterContent>
                     <Typography color="primary" variant="h4">
-                      {status?.setpoint} °C
+                      {settings?.setpoint} °C
                     </Typography>
                   </CenterContent>
                   <Slider
@@ -200,7 +204,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <ReferenceLine
                       stroke="#f44336"
                       strokeDasharray="3 9"
-                      y={status?.setpoint}
+                      y={settings?.setpoint}
                     />
                     <Line
                       dataKey="outputTemperature"

@@ -10,15 +10,17 @@ export interface Measurement {
   time: string;
 }
 
+export interface Settings {
+  fanOn: boolean;
+  hysteresis: number;
+  lastSync: string;
+  mode: Mode;
+  setpoint: number;
+}
+
 interface Database {
-  'settings.fanOn': boolean;
-  'settings.hysteresis': number;
-  'settings.mode': Mode;
-  'settings.setpoint': number;
-  'status.lastSync': string;
-  'temperature.input': number;
-  'temperature.measurements': Measurement[];
-  'temperature.output': number;
+  measurements: Measurement[];
+  settings: Settings;
 }
 
 const getDatabase = () => {
@@ -26,67 +28,41 @@ const getDatabase = () => {
   const db = low(adapter);
 
   db.defaults({
-    'settings.fanOn': false,
-    'settings.hysteresis': 2,
-    'settings.mode': 'NORMAL',
-    'settings.setpoint': 40,
-    'status.lastSync': new Date(),
-    'temperature.input': 0,
-    'temperature.measurements': [],
-    'temperature.output': 0,
+    measurements: [],
+    settings: {
+      fanOn: false,
+      hysteresis: 2,
+      lastSync: new Date(),
+      mode: 'NORMAL',
+      setpoint: 40,
+    },
   }).write();
 
   return db;
 };
 
-export const getStatus = () => {
+export const getSettings = () => {
   const db = getDatabase();
 
-  const fanOn = db.get('settings.fanOn').value();
-  const hysteresis = db.get('settings.hysteresis').value();
-  const inputTemperature = db.get('temperature.input').value();
-  const lastSync = db.get('status.lastSync').value();
-  const mode = db.get('settings.mode').value() as Mode;
-  const outputTemperature = db.get('temperature.output').value();
-  const setpoint = db.get('settings.setpoint').value();
-
-  return {
-    fanOn,
-    hysteresis,
-    inputTemperature,
-    lastSync,
-    mode,
-    outputTemperature,
-    setpoint,
-  };
+  return db.get('settings').value();
 };
 
 export const getMeasurements = () => {
   const db = getDatabase();
 
-  return db.get('temperature.measurements').value();
+  return db.get('measurements').value();
 };
 
-export const setStatus = (
-  inputTemperature,
-  outputTemperature,
-  setpoint,
-  hysteresis,
-  mode,
-  fanOn,
-  lastSync,
-) => {
+export const setSettings = (settings: Settings) => {
   const db = getDatabase();
 
-  db.set('settings.fanOn', fanOn).write();
-  db.set('settings.setpoint', setpoint).write();
-  db.set('settings.hysteresis', hysteresis).write();
-  db.set('settings.mode', mode).write();
-  db.set('status.lastSync', lastSync).write();
-  db.set('temperature.input', inputTemperature).write();
-  db.set('temperature.output', outputTemperature).write();
+  db.set('settings', settings).write();
+};
 
-  const measurements = db.get('temperature.measurements').value();
+export const addMeasurement = (measurement: Measurement) => {
+  const db = getDatabase();
+
+  const measurements = db.get('measurements').value();
 
   const lastMeasurementDate =
     measurements.length && new Date(measurements[measurements.length - 1].time);
@@ -100,12 +76,8 @@ export const setStatus = (
       measurements.shift();
     }
 
-    measurements.push({
-      inputTemperature,
-      outputTemperature,
-      time: lastSync,
-    });
+    measurements.push(measurement);
 
-    db.set('temperature.measurements', measurements).write();
+    db.set('measurements', measurements).write();
   }
 };

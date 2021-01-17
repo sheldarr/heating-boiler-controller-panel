@@ -1,13 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { StatusCodes } from 'http-status-codes';
 
-import { getMeasurements } from '../../../../database';
-import { ControllerMeasurement } from '../../../../api';
+import { Measurement, getMeasurements } from '../../../../database';
 
-export default (
-  req: NextApiRequest,
-  res: NextApiResponse<ControllerMeasurement[]>,
-) => {
+export default (req: NextApiRequest, res: NextApiResponse<Measurement[]>) => {
   const measurements = getMeasurements();
 
   res.status(StatusCodes.OK).json(measurements);

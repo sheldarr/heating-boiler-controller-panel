@@ -1,15 +1,23 @@
 import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { getSettings } from '../../../../database';
 
 import logger from '../../../../server/logger';
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method === 'GET') {
+    const settings = getSettings();
+
+    return res.status(StatusCodes.OK).json(settings);
+  }
+
   const { setpoint, hysteresis, mode } = req.body;
 
   const notValidRequest = !setpoint || !hysteresis || !mode;
 
   if (notValidRequest) {
-    return res.status(400).send('BAD REQUEST');
+    return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
   }
 
   const settings = `${setpoint} ${hysteresis} ${mode}`;
@@ -23,12 +31,14 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
         `New settings applied: ${JSON.stringify(settings)}`,
         req.headers,
       );
-      return res.status(200).send('OK');
+      return res.status(StatusCodes.OK).send(ReasonPhrases.OK);
     })
     .catch(() => {
       logger.warn(
         `New settings could not be applied: ${JSON.stringify(settings)}`,
       );
-      return res.status(500).send('ERROR');
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send(ReasonPhrases.INTERNAL_SERVER_ERROR);
     });
 };
