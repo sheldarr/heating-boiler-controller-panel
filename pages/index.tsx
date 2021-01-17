@@ -13,6 +13,12 @@ import range from 'lodash/range';
 import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {
   LineChart,
@@ -75,6 +81,10 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   const [hysteresis] = useState(INITIAL_HYSTERESIS);
   const [draftSetpoint, setDraftSetpoint] = useState(0);
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
+  const [
+    isSetpointConfirmationDialogOpen,
+    setIsSetpointConfirmationDialogOpen,
+  ] = useState(false);
 
   const [penultimateMeasurement, lastMeasurement] =
     measurements?.slice(-2) || [];
@@ -211,8 +221,8 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                       setDraftSetpoint(value as number);
                     }}
                     onChangeCommitted={(event, value) => {
-                      setIsDraftSetpointEdited(false);
-                      updateSetpoint(value as number);
+                      setDraftSetpoint(value as number);
+                      setIsSetpointConfirmationDialogOpen(true);
                     }}
                     value={draftSetpoint}
                     valueLabelDisplay="auto"
@@ -254,6 +264,44 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
             </Grid>
           </Grid>
         </StyledPaper>
+        <Dialog
+          onClose={() => {
+            setIsDraftSetpointEdited(false);
+            setIsSetpointConfirmationDialogOpen(false);
+          }}
+          open={isSetpointConfirmationDialogOpen}
+        >
+          <DialogTitle>{'Termostat'}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Czy na pewno ustawić termostat na {draftSetpoint}°C?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              color="secondary"
+              onClick={() => {
+                setDraftSetpoint(settings?.setpoint);
+                setIsDraftSetpointEdited(false);
+                setIsSetpointConfirmationDialogOpen(false);
+              }}
+            >
+              Niy
+            </Button>
+            <Button
+              autoFocus
+              color="primary"
+              onClick={() => {
+                updateSetpoint(draftSetpoint);
+                setIsDraftSetpointEdited(false);
+                setIsSetpointConfirmationDialogOpen(false);
+              }}
+            >
+              Ja
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
     </div>
   );
