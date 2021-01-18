@@ -73,6 +73,7 @@ const updateControllerStatusCronJob = new CronJob(
       inputTemperature,
       outputTemperature,
       time: lastSync,
+      trend: 'UNKNOWN',
     };
 
     addMeasurement(measurement);

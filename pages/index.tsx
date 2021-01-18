@@ -18,6 +18,23 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { DefaultTooltipContent } from 'recharts/lib/component/DefaultTooltipContent';
+
+const TooltipWithTrend = (props) => {
+  if (props.payload && props.payload[0] != null) {
+    const newPayload = [
+      ...props.payload,
+      {
+        name: 'Trend',
+        value: props.payload[0].payload.trend === 'UP' ? '↑' : '↓',
+      },
+    ];
+
+    return <DefaultTooltipContent {...props} payload={newPayload} />;
+  }
+
+  return <DefaultTooltipContent {...props} />;
+};
 
 import {
   LineChart,
@@ -34,7 +51,6 @@ import { setControllerSettings, ControllerMode } from '../api';
 import NavBar from '../components/NavBar';
 import useMeasurements from '../hooks/useMeasurements';
 import useSettings from '../hooks/useSettings';
-import useTrend from '../hooks/useTrend';
 
 const StyledPaper = styled(Paper)`
   margin-bottom: 2rem;
@@ -72,14 +88,11 @@ const mapControllerModeToLabel = (mode: ControllerMode): string => {
   }
 };
 
-const INITIAL_HYSTERESIS = 1.0;
-
 const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   const { data: settings } = useSettings();
   const { data: measurements } = useMeasurements();
-  const { data: trend } = useTrend();
 
-  const [hysteresis] = useState(INITIAL_HYSTERESIS);
+  const [hysteresis] = useState(Number(process.env.NEXT_PUBLIC_HYSTERESIS));
   const [draftSetpoint, setDraftSetpoint] = useState(0);
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
   const [
@@ -146,8 +159,10 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
             <Grid item xs={12}>
               <Typography gutterBottom color="error" variant="h2">
                 {lastMeasurement?.outputTemperature.toFixed(3)} °C
-                {trend === 'UP' && <TrendingUpIcon style={{ fontSize: 40 }} />}
-                {trend === 'DOWN' && (
+                {lastMeasurement?.trend === 'UP' && (
+                  <TrendingUpIcon style={{ fontSize: 40 }} />
+                )}
+                {lastMeasurement?.trend === 'DOWN' && (
                   <TrendingDownIcon style={{ fontSize: 40 }} />
                 )}
               </Typography>
@@ -224,7 +239,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis minTickGap={10} width={20} />
-                    <Tooltip />
+                    <Tooltip content={<TooltipWithTrend />} />
                     {settings?.mode === 'NORMAL' && (
                       <ReferenceLine
                         stroke="#f44336"

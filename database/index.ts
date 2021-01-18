@@ -10,6 +10,7 @@ export interface Measurement {
   inputTemperature: number;
   outputTemperature: number;
   time: string;
+  trend: Trend;
 }
 
 export interface Settings {
@@ -23,7 +24,6 @@ export interface Settings {
 interface Database {
   measurements: Measurement[];
   settings: Settings;
-  trend: Trend;
 }
 
 const getDatabase = () => {
@@ -67,27 +67,26 @@ export const addMeasurement = (measurement: Measurement) => {
   const db = getDatabase();
 
   const measurements = db.get('measurements').value();
-  const trend = db.get('trend').value() as Trend;
+  const [lastMeasurement] = measurements.slice(-1);
 
-  const [penultimateMeasurement, lastMeasurement] = measurements.slice(-2);
-
-  if (penultimateMeasurement && lastMeasurement) {
-    if (trend === 'UP' || trend === 'UNKNOWN') {
-      if (
-        lastMeasurement.outputTemperature <
-        penultimateMeasurement.outputTemperature
-      ) {
-        db.set('trend', 'DOWN').write();
+  if (lastMeasurement) {
+    if (lastMeasurement.trend === 'UP' || lastMeasurement.trend === 'UNKNOWN') {
+      if (measurement.outputTemperature < lastMeasurement.outputTemperature) {
+        measurement.trend = 'DOWN';
       }
     }
 
-    if (trend === 'DOWN' || trend === 'UNKNOWN') {
-      if (
-        lastMeasurement.outputTemperature >
-        penultimateMeasurement.outputTemperature
-      ) {
-        db.set('trend', 'UP').write();
+    if (
+      lastMeasurement.trend === 'DOWN' ||
+      lastMeasurement.trend === 'UNKNOWN'
+    ) {
+      if (measurement.outputTemperature > lastMeasurement.outputTemperature) {
+        measurement.trend = 'UP';
       }
+    }
+
+    if (measurement.trend === 'UNKNOWN') {
+      measurement.trend = lastMeasurement.trend;
     }
   }
 
@@ -107,10 +106,4 @@ export const addMeasurement = (measurement: Measurement) => {
 
     db.set('measurements', measurements).write();
   }
-};
-
-export const getTrend = () => {
-  const db = getDatabase();
-
-  return db.get('trend').value() as Trend;
 };
