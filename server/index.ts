@@ -41,42 +41,46 @@ io = new Server(server);
 const updateControllerStatusCronJob = new CronJob(
   process.env.UPDATE_STATUS_CRON,
   async () => {
-    const { data } = await axios.get<ControllerStatus>(
-      process.env.CONTROLLER_API_URL,
-    );
+    try {
+      const { data } = await axios.get<ControllerStatus>(
+        process.env.CONTROLLER_API_URL,
+      );
 
-    const {
-      inputTemperature,
-      outputTemperature,
-      fanOn,
-      hysteresis,
-      mode,
-      setpoint,
-    } = data;
+      const {
+        inputTemperature,
+        outputTemperature,
+        fanOn,
+        hysteresis,
+        mode,
+        setpoint,
+      } = data;
 
-    io.emit(WebSocketEvents.REFRESH_MEASUREMENTS);
-    io.emit(WebSocketEvents.REFRESH_SETTINGS);
+      io.emit(WebSocketEvents.REFRESH_MEASUREMENTS);
+      io.emit(WebSocketEvents.REFRESH_SETTINGS);
 
-    const lastSync = new Date().toISOString();
+      const lastSync = new Date().toISOString();
 
-    const settings: Settings = {
-      fanOn,
-      hysteresis,
-      lastSync,
-      mode,
-      setpoint,
-    };
+      const settings: Settings = {
+        fanOn,
+        hysteresis,
+        lastSync,
+        mode,
+        setpoint,
+      };
 
-    setSettings(settings);
+      setSettings(settings);
 
-    const measurement: Measurement = {
-      inputTemperature,
-      outputTemperature,
-      time: lastSync,
-      trend: 'UNKNOWN',
-    };
+      const measurement: Measurement = {
+        inputTemperature,
+        outputTemperature,
+        time: lastSync,
+        trend: 'UNKNOWN',
+      };
 
-    addMeasurement(measurement);
+      addMeasurement(measurement);
+    } catch (error) {
+      logger.error(error);
+    }
   },
 );
 
