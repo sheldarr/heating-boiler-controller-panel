@@ -123,6 +123,10 @@ export const addMeasurement = (measurement: Measurement) => {
     }
   }
 
+  if (measurement.trendSince === '' && lastMeasurement) {
+    measurement.trendSince = lastMeasurement.time;
+  }
+
   const lastMeasurementDate =
     measurements.length && new Date(measurements[measurements.length - 1].time);
 
