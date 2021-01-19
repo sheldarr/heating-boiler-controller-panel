@@ -11,6 +11,7 @@ export interface Measurement {
   outputTemperature: number;
   time: string;
   trend: Trend;
+  trendSince: string;
 }
 
 export interface Settings {
@@ -66,7 +67,15 @@ export const setSettings = (settings: Settings) => {
 export const addMeasurement = (measurement: Measurement) => {
   const db = getDatabase();
 
-  const measurements = db.get('measurements').value();
+  const measurements = db
+    .get('measurements')
+    .value()
+    .sort((a, b) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return new Date(b.time) - new Date(a.time);
+    });
+
   const [lastMeasurement] = measurements.slice(-1);
 
   if (lastMeasurement) {
@@ -87,6 +96,30 @@ export const addMeasurement = (measurement: Measurement) => {
 
     if (measurement.trend === 'UNKNOWN') {
       measurement.trend = lastMeasurement.trend;
+    }
+  }
+
+  if (measurement.trend === 'DOWN') {
+    for (const oldMeasurement of measurements.reverse()) {
+      if (oldMeasurement.trend === 'DOWN') {
+        continue;
+      }
+
+      measurement.trendSince = oldMeasurement.time;
+
+      break;
+    }
+  }
+
+  if (measurement.trend === 'UP') {
+    for (const oldMeasurement of measurements.reverse()) {
+      if (oldMeasurement.trend === 'UP') {
+        continue;
+      }
+
+      measurement.trendSince = oldMeasurement.time;
+
+      break;
     }
   }
 
