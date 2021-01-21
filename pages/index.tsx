@@ -82,7 +82,7 @@ const mapControllerModeToLabel = (mode: ControllerMode): string => {
     case 'FORCED_FAN_OFF':
       return 'STALE WYŁĄCZONY';
     case 'FORCED_FAN_ON':
-      return 'STALE WYŁĄCZONY';
+      return 'STALE WŁĄCZONY';
     case 'NORMAL':
       return 'TERMOSTAT';
   }
@@ -94,10 +94,15 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
 
   const [hysteresis] = useState(Number(process.env.NEXT_PUBLIC_HYSTERESIS));
   const [draftSetpoint, setDraftSetpoint] = useState(0);
+  const [draftMode, setDraftMode] = useState<ControllerMode | undefined>();
   const [isDraftSetpointEdited, setIsDraftSetpointEdited] = useState(false);
   const [
     isSetpointConfirmationDialogOpen,
     setIsSetpointConfirmationDialogOpen,
+  ] = useState(false);
+  const [
+    isModeConfirmationDialogOpen,
+    setIsModeConfirmationDialogOpen,
   ] = useState(false);
 
   const [lastMeasurement] = measurements?.slice(-1) || [];
@@ -185,7 +190,8 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                   exclusive
                   onChange={(event, value) => {
                     if (value !== null) {
-                      updateMode(value);
+                      setDraftMode(value);
+                      setIsModeConfirmationDialogOpen(true);
                     }
                   }}
                   value={settings?.mode}
@@ -297,6 +303,42 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                 updateSetpoint(draftSetpoint);
                 setIsDraftSetpointEdited(false);
                 setIsSetpointConfirmationDialogOpen(false);
+              }}
+            >
+              Ja
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          onClose={() => {
+            setDraftMode(undefined);
+            setIsModeConfirmationDialogOpen(false);
+          }}
+          open={isModeConfirmationDialogOpen}
+        >
+          <DialogTitle>{'Tryb'}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Czy na pewno zmienić tryb na {mapControllerModeToLabel(draftMode)}
+              ?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              color="secondary"
+              onClick={() => {
+                setDraftMode(undefined);
+                setIsModeConfirmationDialogOpen(false);
+              }}
+            >
+              Niy
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                updateMode(draftMode);
+                setDraftMode(undefined);
+                setIsModeConfirmationDialogOpen(false);
               }}
             >
               Ja
