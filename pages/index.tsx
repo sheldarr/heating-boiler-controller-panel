@@ -189,7 +189,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                 <ToggleButtonGroup
                   exclusive
                   onChange={(event, value) => {
-                    if (value !== null) {
+                    if (value !== null && value !== settings?.mode) {
                       setDraftMode(value);
                       setIsModeConfirmationDialogOpen(true);
                     }
@@ -228,8 +228,10 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                       setDraftSetpoint(value as number);
                     }}
                     onChangeCommitted={(event, value) => {
-                      setDraftSetpoint(value as number);
-                      setIsSetpointConfirmationDialogOpen(true);
+                      if (value !== settings?.setpoint) {
+                        setDraftSetpoint(value as number);
+                        setIsSetpointConfirmationDialogOpen(true);
+                      }
                     }}
                     value={draftSetpoint}
                     valueLabelDisplay="auto"
