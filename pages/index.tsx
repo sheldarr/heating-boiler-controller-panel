@@ -248,13 +248,14 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <XAxis dataKey="time" />
                     <YAxis minTickGap={10} width={20} />
                     <Tooltip content={<TooltipWithTrend />} />
-                    {settings?.mode === 'NORMAL' && (
-                      <ReferenceLine
-                        stroke="#f44336"
-                        strokeDasharray="3 9"
-                        y={settings?.setpoint}
-                      />
-                    )}
+                    <Line
+                      dataKey="setpoint"
+                      dot={false}
+                      name="Termostat"
+                      stroke="#f44336"
+                      strokeDasharray="5 5"
+                      type="stepAfter"
+                    />
                     <Line
                       dataKey="outputTemperature"
                       dot={false}

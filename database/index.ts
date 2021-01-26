@@ -9,6 +9,7 @@ export type Trend = 'DOWN' | 'UP' | 'UNKNOWN';
 export interface Measurement {
   inputTemperature: number;
   outputTemperature: number;
+  setpoint: number;
   time: string;
   trend: Trend;
 }
