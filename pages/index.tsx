@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import styled from 'styled-components';
@@ -150,140 +151,142 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
     <div>
       <NavBar fanOn={settings?.fanOn} lastSync={settings?.lastSync} />
       <Box margin={2}>
-        <Grid container>
-          <Grid item xs={12}>
-            <Typography gutterBottom color="error" variant="h2">
-              {lastMeasurement?.outputTemperature.toFixed(3)} °C
-              {lastMeasurement?.trend === 'UP' && (
-                <TrendingUpIcon style={{ fontSize: 40 }} />
-              )}
-              {lastMeasurement?.trend === 'DOWN' && (
-                <TrendingDownIcon style={{ fontSize: 40 }} />
-              )}
-            </Typography>
-          </Grid>
-          <Grid container item justify="space-between" xs={12}>
-            <Grid item>
-              <OutputTemperature gutterBottom variant="h4">
-                {lastMeasurement?.inputTemperature.toFixed(3)} °C
-              </OutputTemperature>
-            </Grid>
-            <Grid item>
-              <Typography gutterBottom color="primary" variant="h4">
-                {settings && `⎎${hysteresis}`}
+        <Container>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography gutterBottom color="error" variant="h2">
+                {lastMeasurement?.outputTemperature.toFixed(3)} °C
+                {lastMeasurement?.trend === 'UP' && (
+                  <TrendingUpIcon style={{ fontSize: 40 }} />
+                )}
+                {lastMeasurement?.trend === 'DOWN' && (
+                  <TrendingDownIcon style={{ fontSize: 40 }} />
+                )}
               </Typography>
             </Grid>
-          </Grid>
-          <Grid item xs={12}>
-            <CenterContent>
-              <ToggleButtonGroup
-                exclusive
-                onChange={(event, value) => {
-                  if (value !== null && value !== settings?.mode) {
-                    setDraftMode(value);
-                    setIsModeConfirmationDialogOpen(true);
-                  }
-                }}
-                value={settings?.mode}
-              >
-                <ToggleButton key={1} value="FORCED_FAN_OFF">
-                  OFF
-                </ToggleButton>
-                <ToggleButton key={2} value="NORMAL">
-                  TERMOSTAT
-                </ToggleButton>
-                <ToggleButton key={3} value="FORCED_FAN_ON">
-                  ON
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </CenterContent>
-          </Grid>
-          {settings?.mode === 'NORMAL' && (
+            <Grid container item justify="space-between" xs={12}>
+              <Grid item>
+                <OutputTemperature gutterBottom variant="h4">
+                  {lastMeasurement?.inputTemperature.toFixed(3)} °C
+                </OutputTemperature>
+              </Grid>
+              <Grid item>
+                <Typography gutterBottom color="primary" variant="h4">
+                  {settings && `⎎${hysteresis}`}
+                </Typography>
+              </Grid>
+            </Grid>
             <Grid item xs={12}>
-              <SliderContainer>
-                <CenterContent>
-                  <Typography color="primary" variant="h4">
-                    {settings?.setpoint} °C
-                  </Typography>
-                </CenterContent>
-                <Slider
-                  marks={range(30, 51).map((number) => ({
-                    label: number % 10 === 0 && `${number}°C`,
-                    value: number,
-                  }))}
-                  max={50}
-                  min={30}
+              <CenterContent>
+                <ToggleButtonGroup
+                  exclusive
                   onChange={(event, value) => {
-                    setIsDraftSetpointEdited(true);
-                    setDraftSetpoint(value as number);
-                  }}
-                  onChangeCommitted={(event, value) => {
-                    if (value !== settings?.setpoint) {
-                      setDraftSetpoint(value as number);
-                      setIsSetpointConfirmationDialogOpen(true);
+                    if (value !== null && value !== settings?.mode) {
+                      setDraftMode(value);
+                      setIsModeConfirmationDialogOpen(true);
                     }
                   }}
-                  value={draftSetpoint}
-                  valueLabelDisplay="auto"
-                  valueLabelFormat={(value) => `${value}°C`}
-                />
-              </SliderContainer>
+                  value={settings?.mode}
+                >
+                  <ToggleButton key={1} value="FORCED_FAN_OFF">
+                    OFF
+                  </ToggleButton>
+                  <ToggleButton key={2} value="NORMAL">
+                    TERMOSTAT
+                  </ToggleButton>
+                  <ToggleButton key={3} value="FORCED_FAN_ON">
+                    ON
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </CenterContent>
             </Grid>
-          )}
-          <Grid item xs={12}>
-            <ChartContainer>
-              <ResponsiveContainer>
-                <LineChart data={measurements}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis minTickGap={10} width={20} />
-                  <Tooltip content={<TooltipWithTrend />} />
-                  <Line
-                    dataKey="setpoint"
-                    dot={false}
-                    name="Termostat"
-                    stroke="#f44336"
-                    strokeDasharray="5 5"
-                    type="stepAfter"
+            {settings?.mode === 'NORMAL' && (
+              <Grid item xs={12}>
+                <SliderContainer>
+                  <CenterContent>
+                    <Typography color="primary" variant="h4">
+                      {settings?.setpoint} °C
+                    </Typography>
+                  </CenterContent>
+                  <Slider
+                    marks={range(30, 51).map((number) => ({
+                      label: number % 10 === 0 && `${number}°C`,
+                      value: number,
+                    }))}
+                    max={50}
+                    min={30}
+                    onChange={(event, value) => {
+                      setIsDraftSetpointEdited(true);
+                      setDraftSetpoint(value as number);
+                    }}
+                    onChangeCommitted={(event, value) => {
+                      if (value !== settings?.setpoint) {
+                        setDraftSetpoint(value as number);
+                        setIsSetpointConfirmationDialogOpen(true);
+                      }
+                    }}
+                    value={draftSetpoint}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => `${value}°C`}
                   />
-                  <Line
-                    dataKey="outputTemperature"
-                    dot={false}
-                    name="Temperatura wyjściowa"
-                    stroke="#f44336"
-                    type="monotone"
-                  />
-                  <Line
-                    dataKey="inputTemperature"
-                    dot={false}
-                    name="Temperatura wejściowa"
-                    stroke="#2196f3"
-                    type="monotone"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+                </SliderContainer>
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <ChartContainer>
+                <ResponsiveContainer>
+                  <LineChart data={measurements}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis minTickGap={10} width={20} />
+                    <Tooltip content={<TooltipWithTrend />} />
+                    <Line
+                      dataKey="setpoint"
+                      dot={false}
+                      name="Termostat"
+                      stroke="#f44336"
+                      strokeDasharray="5 5"
+                      type="stepAfter"
+                    />
+                    <Line
+                      dataKey="outputTemperature"
+                      dot={false}
+                      name="Temperatura wyjściowa"
+                      stroke="#f44336"
+                      type="monotone"
+                    />
+                    <Line
+                      dataKey="inputTemperature"
+                      dot={false}
+                      name="Temperatura wejściowa"
+                      stroke="#2196f3"
+                      type="monotone"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </Grid>
+            <Grid item xs={12}>
+              <ChartContainer>
+                <ResponsiveContainer>
+                  <LineChart data={measurements}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line
+                      dataKey="heap"
+                      dot={false}
+                      name="Heap"
+                      stroke="#7d6608"
+                      type="monotone"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <ChartContainer>
-              <ResponsiveContainer>
-                <LineChart data={measurements}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    dataKey="heap"
-                    dot={false}
-                    name="Heap"
-                    stroke="#7d6608"
-                    type="monotone"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </Grid>
-        </Grid>
+        </Container>
         <Dialog
           onClose={() => {
             setIsDraftSetpointEdited(false);
