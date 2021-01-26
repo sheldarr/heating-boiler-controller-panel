@@ -238,7 +238,12 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                   <LineChart data={measurements}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
-                    <YAxis minTickGap={10} width={20} />
+                    <YAxis
+                      dataKey="inputTemperature"
+                      domain={[30, 50]}
+                      minTickGap={10}
+                      width={20}
+                    />
                     <Tooltip
                       content={<TooltipWithTrend />}
                       viewBox={{
