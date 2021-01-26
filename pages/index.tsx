@@ -279,25 +279,6 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                 </ResponsiveContainer>
               </ChartContainer>
             </Grid>
-            {/* <Grid item xs={12}>
-              <ChartContainer>
-                <ResponsiveContainer>
-                  <LineChart data={measurements}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line
-                      dataKey="heap"
-                      dot={false}
-                      name="Heap"
-                      stroke="#7d6608"
-                      type="monotone"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </Grid> */}
           </Grid>
         </Container>
       </Box>
