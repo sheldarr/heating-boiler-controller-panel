@@ -150,7 +150,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   return (
     <div>
       <NavBar fanOn={settings?.fanOn} lastSync={settings?.lastSync} />
-      <Box margin={2}>
+      <Box margin={2} marginTop={4}>
         <Container>
           <Grid container>
             <Grid item xs={12}>
@@ -239,7 +239,15 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis minTickGap={10} width={20} />
-                    <Tooltip content={<TooltipWithTrend />} />
+                    <Tooltip
+                      content={<TooltipWithTrend />}
+                      viewBox={{
+                        height: 100,
+                        width: 200,
+                        x: 0,
+                        y: 0,
+                      }}
+                    />
                     <Line
                       dataKey="setpoint"
                       dot={false}
@@ -266,7 +274,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                 </ResponsiveContainer>
               </ChartContainer>
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <ChartContainer>
                 <ResponsiveContainer>
                   <LineChart data={measurements}>
@@ -284,82 +292,81 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                   </LineChart>
                 </ResponsiveContainer>
               </ChartContainer>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Container>
-        <Dialog
-          onClose={() => {
-            setIsDraftSetpointEdited(false);
-            setIsSetpointConfirmationDialogOpen(false);
-          }}
-          open={isSetpointConfirmationDialogOpen}
-        >
-          <DialogTitle>{'Termostat'}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Czy na pewno ustawić termostat na {draftSetpoint}°C?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="secondary"
-              onClick={() => {
-                setDraftSetpoint(settings?.setpoint);
-                setIsDraftSetpointEdited(false);
-                setIsSetpointConfirmationDialogOpen(false);
-              }}
-            >
-              Niy
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => {
-                updateSetpoint(draftSetpoint);
-                setIsDraftSetpointEdited(false);
-                setIsSetpointConfirmationDialogOpen(false);
-              }}
-            >
-              Ja
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          onClose={() => {
-            setDraftMode(undefined);
-            setIsModeConfirmationDialogOpen(false);
-          }}
-          open={isModeConfirmationDialogOpen}
-        >
-          <DialogTitle>{'Tryb'}</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Czy na pewno zmienić tryb na {mapControllerModeToLabel(draftMode)}
-              ?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="secondary"
-              onClick={() => {
-                setDraftMode(undefined);
-                setIsModeConfirmationDialogOpen(false);
-              }}
-            >
-              Niy
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => {
-                updateMode(draftMode);
-                setDraftMode(undefined);
-                setIsModeConfirmationDialogOpen(false);
-              }}
-            >
-              Ja
-            </Button>
-          </DialogActions>
-        </Dialog>
       </Box>
+      <Dialog
+        onClose={() => {
+          setIsDraftSetpointEdited(false);
+          setIsSetpointConfirmationDialogOpen(false);
+        }}
+        open={isSetpointConfirmationDialogOpen}
+      >
+        <DialogTitle>{'Termostat'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Czy na pewno ustawić termostat na {draftSetpoint}°C?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="secondary"
+            onClick={() => {
+              setDraftSetpoint(settings?.setpoint);
+              setIsDraftSetpointEdited(false);
+              setIsSetpointConfirmationDialogOpen(false);
+            }}
+          >
+            Niy
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              updateSetpoint(draftSetpoint);
+              setIsDraftSetpointEdited(false);
+              setIsSetpointConfirmationDialogOpen(false);
+            }}
+          >
+            Ja
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        onClose={() => {
+          setDraftMode(undefined);
+          setIsModeConfirmationDialogOpen(false);
+        }}
+        open={isModeConfirmationDialogOpen}
+      >
+        <DialogTitle>{'Tryb'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Czy na pewno zmienić tryb na {mapControllerModeToLabel(draftMode)}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="secondary"
+            onClick={() => {
+              setDraftMode(undefined);
+              setIsModeConfirmationDialogOpen(false);
+            }}
+          >
+            Niy
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              updateMode(draftMode);
+              setDraftMode(undefined);
+              setIsModeConfirmationDialogOpen(false);
+            }}
+          >
+            Ja
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
