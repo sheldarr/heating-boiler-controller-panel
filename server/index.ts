@@ -71,6 +71,7 @@ const updateControllerStatusCronJob = new CronJob(
       setSettings(settings);
 
       const measurement: Measurement = {
+        heap: data.heap || 0,
         inputTemperature,
         outputTemperature,
         setpoint,

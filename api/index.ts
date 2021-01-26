@@ -4,6 +4,7 @@ export type ControllerMode = 'FORCED_FAN_OFF' | 'FORCED_FAN_ON' | 'NORMAL';
 
 export interface ControllerStatus {
   fanOn: boolean;
+  heap?: number;
   hysteresis: number;
   inputTemperature: number;
   lastSync: string | Date;

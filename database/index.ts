@@ -7,6 +7,7 @@ type Mode = 'NORMAL' | 'FORCED_FAN_OFF' | 'FORCED_FAN_ON';
 export type Trend = 'DOWN' | 'UP' | 'UNKNOWN';
 
 export interface Measurement {
+  heap: number;
   inputTemperature: number;
   outputTemperature: number;
   setpoint: number;
