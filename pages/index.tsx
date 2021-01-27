@@ -148,7 +148,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
   };
 
   return (
-    <div>
+    <>
       <NavBar fanOn={settings?.fanOn} lastSync={settings?.lastSync} />
       <Box margin={2} marginTop={4}>
         <Container>
@@ -353,7 +353,7 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 };
 
