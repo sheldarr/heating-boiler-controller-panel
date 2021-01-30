@@ -19,7 +19,7 @@ import useMeasurements from '../../hooks/useMeasurements';
 import useSettings from '../../hooks/useSettings';
 
 const ChartContainer = styled.div`
-  height: 36rem;
+  height: 32rem;
   margin-top: 4rem;
 `;
 
@@ -39,7 +39,7 @@ const Debug = () => {
                   <LineChart data={measurements}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
-                    <YAxis dataKey="heap" width={20} />
+                    <YAxis dataKey="heap" />
                     <Tooltip
                       viewBox={{
                         height: 100,
