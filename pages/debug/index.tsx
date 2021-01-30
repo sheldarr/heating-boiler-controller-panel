@@ -20,7 +20,6 @@ import useSettings from '../../hooks/useSettings';
 
 const ChartContainer = styled.div`
   height: 32rem;
-  margin-top: 4rem;
 `;
 
 const Debug = () => {
