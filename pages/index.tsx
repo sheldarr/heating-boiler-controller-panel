@@ -239,8 +239,9 @@ const Home = ({ enqueueSnackbar }: WithSnackbarProps) => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis
+                      allowDataOverflow={true}
                       dataKey="inputTemperature"
-                      domain={[30, 50]}
+                      domain={[20, 50]}
                       minTickGap={10}
                       width={20}
                     />
