@@ -13,7 +13,7 @@ import {
   Settings,
 } from '../database';
 import { WebSocketEvents } from '../events';
-import { ControllerStatus, setControllerSettings } from '../api';
+import { ControllerStatus } from '../api';
 import logger from './logger';
 
 axios.interceptors.request.use(requestLogger, errorLogger);
@@ -47,11 +47,11 @@ const restorePreviousSetpoint = () => {
   if (lastMeasurement) {
     logger.error(`Restoring previous setpoint: ${lastMeasurement.setpoint}`);
 
-    return setControllerSettings({
-      hysteresis: Number(process.env.NEXT_PUBLIC_HYSTERESIS),
-      mode: 'NORMAL',
-      setpoint: lastMeasurement.setpoint,
-    });
+    const settings = `${lastMeasurement.setpoint} ${Number(
+      process.env.NEXT_PUBLIC_HYSTERESIS,
+    )} ${'NORMAL'}`;
+
+    return axios.post(process.env.CONTROLLER_API_URL, settings);
   }
 
   logger.error('Could not restore previous setpoint');
@@ -74,7 +74,7 @@ const updateControllerStatusCronJob = new CronJob(
         setpoint,
       } = data;
 
-      if (setpoint === null) {
+      if (setpoint === -1) {
         return restorePreviousSetpoint();
       }
 
@@ -104,13 +104,13 @@ const updateControllerStatusCronJob = new CronJob(
 
       addMeasurement(measurement);
     } catch (error) {
-      logger.error(error);
+      logger.error(`Could not get controller status ${error}`);
     }
   },
 );
 
 server.on('error', (error) => {
-  logger.error(error);
+  logger.error(`Server error ${error}`);
 });
 
 app.prepare().then(() => {
