@@ -20,7 +20,6 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "axios": "^0.21.1",
-    "axios-logger": "^2.5.0",
     "cron": "^1.8.2",
     "date-fns": "^2.16.1",
     "date-fns-tz": "^1.0.12",
@@ -39,6 +38,7 @@
     "socket.io-client": "^3.1.0",
     "styled-components": "^5.2.1",
     "swr": "^0.4.0",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -55,6 +55,7 @@
     "@types/recharts": "^1.8.19",
     "@types/socket.io": "^2.1.12",
     "@types/styled-components": "^5.1.7",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.13.0",
     "@typescript-eslint/parser": "^4.13.0",
     "babel-plugin-styled-components": "^1.12.0",

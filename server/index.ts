@@ -3,7 +3,7 @@ import axios from 'axios';
 import next from 'next';
 import { CronJob } from 'cron';
 import { Server } from 'socket.io';
-import { errorLogger, responseLogger, requestLogger } from 'axios-logger';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   addMeasurement,
@@ -16,8 +16,30 @@ import { WebSocketEvents } from '../events';
 import { ControllerStatus } from '../api';
 import logger from './logger';
 
-axios.interceptors.request.use(requestLogger, errorLogger);
-axios.interceptors.response.use(responseLogger, errorLogger);
+const CORRELATION_HEADER = 'x-correlation-id';
+
+axios.interceptors.request.use((request) => {
+  const correlationId = uuidv4().slice(0, 4);
+
+  request.headers[CORRELATION_HEADER] = correlationId;
+
+  logger.info(
+    `[REQUEST][${correlationId}] ${
+      request.data === undefined ? '' : JSON.stringify(request.data)
+    }`,
+  );
+
+  return request;
+});
+
+axios.interceptors.response.use((response) => {
+  logger.info(
+    `[RESPONSE][${response.config.headers[CORRELATION_HEADER]}] ${
+      response.data === undefined ? '' : JSON.stringify(response.data)
+    }`,
+  );
+  return response;
+});
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
