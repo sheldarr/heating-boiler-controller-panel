@@ -24,9 +24,9 @@ axios.interceptors.request.use((request) => {
   request.headers[CORRELATION_HEADER] = correlationId;
 
   logger.info(
-    `[${correlationId}][${request.method.toUpperCase()}][${request.url}] ${
+    `[${correlationId}][${request.method.toUpperCase()}][${request.url}][${
       request.data === undefined ? '' : JSON.stringify(request.data)
-    }`,
+    }]`,
   );
 
   return request;
@@ -34,9 +34,9 @@ axios.interceptors.request.use((request) => {
 
 axios.interceptors.response.use((response) => {
   logger.info(
-    `[${response.config.headers[CORRELATION_HEADER]}][${response.status}] ${
+    `[${response.config.headers[CORRELATION_HEADER]}][${response.status}][${
       response.data === undefined ? '' : JSON.stringify(response.data)
-    }`,
+    }]`,
   );
   return response;
 });
