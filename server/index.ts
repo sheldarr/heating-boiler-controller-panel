@@ -24,7 +24,7 @@ axios.interceptors.request.use((request) => {
   request.headers[CORRELATION_HEADER] = correlationId;
 
   logger.info(
-    `[REQUEST][${correlationId}] ${
+    `[${correlationId}][${request.method.toUpperCase()}][${request.url}] ${
       request.data === undefined ? '' : JSON.stringify(request.data)
     }`,
   );
@@ -34,7 +34,7 @@ axios.interceptors.request.use((request) => {
 
 axios.interceptors.response.use((response) => {
   logger.info(
-    `[RESPONSE][${response.config.headers[CORRELATION_HEADER]}] ${
+    `[${response.config.headers[CORRELATION_HEADER]}][${response.status}] ${
       response.data === undefined ? '' : JSON.stringify(response.data)
     }`,
   );
