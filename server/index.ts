@@ -138,6 +138,7 @@ server.on('error', (error) => {
 app.prepare().then(() => {
   server.listen(APP_PORT, () => {
     updateControllerStatusCronJob.start();
+
     logger.info(
       `> Update controller status cron job started (${process.env.UPDATE_STATUS_CRON})`,
     );
